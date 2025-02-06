@@ -31,12 +31,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.bookshelf.R
+import com.example.bookshelf.ui.composable.BoxImage
 
 @Composable
 fun HomeScreen(
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        contentPadding = contentPadding,
         modifier = modifier
             .fillMaxSize()
     ) {
@@ -245,28 +248,6 @@ fun HomePopularBooks(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun BoxImage(
-    widthSize: Int,
-    heightSize: Int,
-    roundedCornerShape: Int
-) {
-    Box(
-        modifier = Modifier
-            .size(widthSize.dp, heightSize.dp)
-            .clip(RoundedCornerShape(roundedCornerShape.dp))
-            .background(MaterialTheme.colorScheme.secondary)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = stringResource(id = R.string.profile_photo),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(widthSize.dp, heightSize.dp)
-        )
     }
 }
 

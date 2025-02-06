@@ -15,8 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookshelf.R
+import com.example.bookshelf.ui.screens.BookListScreen
 import com.example.bookshelf.ui.screens.HomeScreen
-import com.example.bookshelf.ui.screens.SettingsScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -26,13 +26,13 @@ fun BookshelfApp() {
         bottomBar = {
             BookshelfBottomAppBar(navController)
         }
-    ) {
+    ) { contentPadding ->
         NavHost(navController = navController, startDestination = "home") {
             composable("home") {
-                HomeScreen()
+                HomeScreen(contentPadding = contentPadding)
             }
             composable("settings") {
-                SettingsScreen()
+                BookListScreen(contentPadding = contentPadding)
             }
         }
     }

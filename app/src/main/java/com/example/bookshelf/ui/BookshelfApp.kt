@@ -9,12 +9,15 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bookshelf.R
+import com.example.bookshelf.ui.screens.BookDetailsScreen
 import com.example.bookshelf.ui.screens.BookListScreen
 import com.example.bookshelf.ui.screens.HomeScreen
 
@@ -22,17 +25,33 @@ import com.example.bookshelf.ui.screens.HomeScreen
 @Composable
 fun BookshelfApp() {
     val navController = rememberNavController()
+    val bottomBarState = remember { mutableStateOf(true) }
     Scaffold(
         bottomBar = {
-            BookshelfBottomAppBar(navController)
+            if (bottomBarState.value) {
+                BookshelfBottomAppBar(navController)
+            }
         }
     ) { contentPadding ->
         NavHost(navController = navController, startDestination = "home") {
             composable("home") {
-                HomeScreen(contentPadding = contentPadding)
+                HomeScreen(
+                    bottomBarState = bottomBarState,
+                    contentPadding = contentPadding
+                )
             }
             composable("settings") {
-                BookListScreen(contentPadding = contentPadding)
+                BookListScreen(
+                    bottomBarState = bottomBarState,
+                    contentPadding = contentPadding,
+                    navController = navController
+                )
+            }
+            composable("details") {
+                BookDetailsScreen(
+                    contentPadding = contentPadding,
+                    bottomBarState = bottomBarState,
+                )
             }
         }
     }

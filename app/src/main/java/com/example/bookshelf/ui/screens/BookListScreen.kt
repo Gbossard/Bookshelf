@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -22,9 +23,11 @@ import com.example.bookshelf.R
 
 @Composable
 fun BookListScreen(
+    bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    bottomBarState.value = true
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize().padding(16.dp),
         contentPadding = contentPadding,

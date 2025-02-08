@@ -2,6 +2,7 @@ package com.example.bookshelf.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,11 +19,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bookshelf.R
 
 
 @Composable
 fun BookListScreen(
+    navController: NavController,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -41,6 +44,7 @@ fun BookListScreen(
                 contentDescription = stringResource(id = R.string.profile_photo),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .clickable { navController.navigate("details") }
                     .clip(RoundedCornerShape(24.dp))
                     .background(MaterialTheme.colorScheme.secondary)
             )

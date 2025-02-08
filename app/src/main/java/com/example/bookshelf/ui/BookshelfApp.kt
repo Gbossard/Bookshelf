@@ -51,6 +51,7 @@ fun BookshelfApp() {
                 BookDetailsScreen(
                     contentPadding = contentPadding,
                     bottomBarState = bottomBarState,
+                    navController = navController
                 )
             }
         }

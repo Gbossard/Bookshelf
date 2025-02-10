@@ -52,6 +52,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
 
+    // Retrofit, Coil and serialization JSON
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)

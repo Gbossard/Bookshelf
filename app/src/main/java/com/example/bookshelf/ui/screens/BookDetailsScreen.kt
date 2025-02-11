@@ -29,12 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.bookshelf.R
 
 @Composable
 fun BookDetailsScreen(
-    navController: NavController,
+    onGoBack: () -> Unit,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -51,7 +50,7 @@ fun BookDetailsScreen(
             }
         }
         BackButton(
-            navController = navController,
+            onGoBack = onGoBack,
             modifier = Modifier.align(alignment = Alignment.TopStart)
         )
         BookDetailsButtonToBuy(
@@ -62,7 +61,7 @@ fun BookDetailsScreen(
 
 @Composable
 fun BackButton(
-    navController: NavController,
+    onGoBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     FloatingActionButton(
@@ -70,9 +69,7 @@ fun BackButton(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
         shape = CircleShape,
-        onClick = {
-            navController.navigateUp()
-        }
+        onClick = onGoBack
     ) {
         Icon(
             painter = painterResource(R.drawable.arrow_back_24dp),

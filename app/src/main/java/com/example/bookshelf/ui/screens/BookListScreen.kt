@@ -19,13 +19,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.bookshelf.R
 
 
 @Composable
 fun BookListScreen(
-    navController: NavController,
+    onGoDetails: () -> Unit,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
@@ -44,7 +43,7 @@ fun BookListScreen(
                 contentDescription = stringResource(id = R.string.profile_photo),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clickable { navController.navigate("details") }
+                    .clickable { onGoDetails() }
                     .clip(RoundedCornerShape(24.dp))
                     .background(MaterialTheme.colorScheme.secondary)
             )

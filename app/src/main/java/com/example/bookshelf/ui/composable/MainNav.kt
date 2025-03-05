@@ -2,7 +2,6 @@ package com.example.bookshelf.ui.composable
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -10,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -47,6 +47,7 @@ fun MainNav() {
                         navController.navigate(Screen.Details.routes)
                     },
                     retryAction = {
+
                     }
                 )
             }
@@ -76,7 +77,7 @@ fun BookshelfBottomAppBar(
             }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Rounded.Settings, contentDescription = "Paramètres") },
+            icon = { Icon(painter = painterResource(R.drawable.ic_flight), contentDescription = stringResource(R.string.flight)) },
             selected = false,
             onClick = {
                 navController.navigate(Screen.BooksCategories.routes)

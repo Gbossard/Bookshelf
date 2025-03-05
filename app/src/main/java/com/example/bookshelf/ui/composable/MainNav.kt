@@ -45,6 +45,8 @@ fun MainNav() {
                     contentPadding = contentPadding,
                     onGoDetails = {
                         navController.navigate(Screen.Details.routes)
+                    },
+                    retryAction = {
                     }
                 )
             }

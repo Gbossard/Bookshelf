@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,12 +20,15 @@ import com.example.bookshelf.R
 import com.example.bookshelf.ui.navigation.Screen
 import com.example.bookshelf.ui.screens.BookDetailsScreen
 import com.example.bookshelf.ui.screens.BookListScreen
+import com.example.bookshelf.ui.screens.BookshelfViewModel
 import com.example.bookshelf.ui.screens.HomeScreen
 
 @Composable
 fun MainNav() {
     val navController = rememberNavController()
     val bottomBarState = remember { mutableStateOf(true) }
+    val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
+
     Scaffold(
         bottomBar = {
             if (bottomBarState.value) {
@@ -43,7 +47,8 @@ fun MainNav() {
                 BookListScreen(
                     bottomBarState = bottomBarState,
                     contentPadding = contentPadding,
-                    onGoDetails = {
+                    onGoDetails = { book ->
+                        bookshelfViewModel.selectedBookId = book.id
                         navController.navigate(Screen.Details.routes)
                     },
                     retryAction = {
@@ -52,11 +57,16 @@ fun MainNav() {
                 )
             }
             composable(Screen.Details.routes) {
+                bookshelfViewModel.getBook(bookshelfViewModel.selectedBookId)
                 BookDetailsScreen(
+                    viewModel = bookshelfViewModel,
                     contentPadding = contentPadding,
                     bottomBarState = bottomBarState,
                     onGoBack = {
                         navController.popBackStack()
+                    },
+                    retryAction = {
+
                     }
                 )
             }

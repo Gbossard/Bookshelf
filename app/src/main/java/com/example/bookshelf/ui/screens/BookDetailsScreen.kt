@@ -30,15 +30,42 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.bookshelf.R
+import com.example.bookshelf.model.Book
+import com.example.bookshelf.ui.composable.ErrorScreen
+import com.example.bookshelf.ui.composable.LoadingScreen
 
 @Composable
 fun BookDetailsScreen(
+    viewModel: BookshelfViewModel,
     onGoBack: () -> Unit,
+    retryAction: () -> Unit,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val bookshelfDetailUiState = viewModel.bookshelfDetailUiState
     bottomBarState.value = false
+
+    when(bookshelfDetailUiState) {
+        is BookshelfDetailUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is BookshelfDetailUiState.Success ->
+            DetailScreen(
+                contentPadding = contentPadding,
+                modifier = modifier,
+                onGoBack = onGoBack,
+                book = bookshelfDetailUiState.book
+            )
+        is BookshelfDetailUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+    }
+}
+
+@Composable
+fun DetailScreen(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    onGoBack: () -> Unit,
+    book: Book
+) {
     Box(
         modifier = modifier
             .padding(contentPadding)
@@ -46,7 +73,7 @@ fun BookDetailsScreen(
     ) {
         LazyColumn {
             item {
-                BookDetailsCard()
+                BookDetailsCard(book)
             }
         }
         BackButton(
@@ -79,15 +106,18 @@ fun BackButton(
 }
 
 @Composable
-fun BookDetailsCard() {
+fun BookDetailsCard(
+    book: Book
+) {
     Column {
         BookDetailsHeader()
-        BookDetailsDescription()
+        BookDetailsDescription(book)
     }
 }
 
 @Composable
-fun BookDetailsHeader() {
+fun BookDetailsHeader(
+) {
     Box {
         Image(
             painter = painterResource(R.drawable.gaelle_cv),
@@ -104,13 +134,14 @@ fun BookDetailsHeader() {
 
 @Composable
 fun BookDetailsDescription(
+    book: Book,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 80.dp)
     ) {
         Text(
-            text = stringResource(R.string.book_details_title),
+            text = book.volumeInfo.title,
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +14,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,11 +33,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.bookshelf.R
 import com.example.bookshelf.model.Book
+import com.example.bookshelf.ui.composable.ErrorScreen
+import com.example.bookshelf.ui.composable.LoadingScreen
 
 
 @Composable
 fun BookListScreen(
-    onGoDetails: () -> Unit,
+    onGoDetails: (Book) -> Unit,
     retryAction: () -> Unit,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
@@ -50,6 +48,7 @@ fun BookListScreen(
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
     val bookshelfUiState = bookshelfViewModel.bookshelfUiState
     bottomBarState.value = true
+
     when(bookshelfUiState) {
         is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is BookshelfUiState.Success ->
@@ -67,7 +66,7 @@ fun BookListScreen(
 @Composable
 fun BooksGridScreen(
     books: List<Book>,
-    onGoDetails: () -> Unit,
+    onGoDetails: (Book) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -82,7 +81,7 @@ fun BooksGridScreen(
             if (book.volumeInfo.imageLinks?.thumbnail ==  null) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.clickable { onGoDetails() }
+                    modifier = Modifier.clickable { onGoDetails(book) }
                 ) {
                     Image(
                         modifier = modifier
@@ -109,40 +108,9 @@ fun BooksGridScreen(
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = stringResource(R.string.book_details_description),
-                    modifier = Modifier.fillMaxWidth().clickable { onGoDetails() }.clip(RoundedCornerShape(24.dp))
+                    modifier = Modifier.fillMaxWidth().clickable { onGoDetails(book) }.clip(RoundedCornerShape(24.dp))
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Image(
-            modifier = modifier.size(200.dp),
-            painter = painterResource(R.drawable.loading_img),
-            contentDescription = stringResource(R.string.loading)
-        )
-    }
-}
-
-@Composable
-fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = stringResource(R.string.loading_failed)
-        )
-        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
         }
     }
 }

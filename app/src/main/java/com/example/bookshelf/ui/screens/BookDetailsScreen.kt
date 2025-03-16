@@ -36,26 +36,26 @@ import com.example.bookshelf.ui.composable.LoadingScreen
 
 @Composable
 fun BookDetailsScreen(
-    viewModel: BookshelfViewModel,
+    viewModel: BookshelfDetailsViewModel,
     onGoBack: () -> Unit,
     retryAction: () -> Unit,
     bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    val bookshelfDetailUiState = viewModel.bookshelfDetailUiState
+    val bookshelfDetailsUiState = viewModel.bookshelfDetailsUiState
     bottomBarState.value = false
 
-    when(bookshelfDetailUiState) {
-        is BookshelfDetailUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is BookshelfDetailUiState.Success ->
+    when(bookshelfDetailsUiState) {
+        is BookshelfDetailsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is BookshelfDetailsUiState.Success ->
             DetailScreen(
                 contentPadding = contentPadding,
                 modifier = modifier,
                 onGoBack = onGoBack,
-                book = bookshelfDetailUiState.book
+                book = bookshelfDetailsUiState.book
             )
-        is BookshelfDetailUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+        is BookshelfDetailsUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
     }
 }
 

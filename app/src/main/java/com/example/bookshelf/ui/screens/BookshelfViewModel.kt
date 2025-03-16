@@ -22,24 +22,11 @@ sealed interface BookshelfUiState {
     object Loading: BookshelfUiState
 }
 
-sealed interface BookshelfDetailUiState {
-    data class Success(val book: Book) : BookshelfDetailUiState
-    object Error: BookshelfDetailUiState
-    object Loading: BookshelfDetailUiState
-}
-
 class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
     var bookshelfUiState: BookshelfUiState by mutableStateOf(BookshelfUiState.Loading)
         private set
 
-    var bookshelfDetailUiState: BookshelfDetailUiState by mutableStateOf(BookshelfDetailUiState.Loading)
-        private set
-
     var selectedBookId by mutableStateOf("")
-
-    init {
-        getBooks()
-    }
 
     fun getBooks(query: String = "travel+newZealand") {
         viewModelScope.launch {
@@ -57,24 +44,6 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
                 BookshelfUiState.Error
             } catch (e: HttpException) {
                 BookshelfUiState.Error
-            }
-        }
-    }
-
-    fun getBook(id: String) {
-        viewModelScope.launch {
-            bookshelfDetailUiState = BookshelfDetailUiState.Loading
-            bookshelfDetailUiState = try {
-                val book = bookshelfRepository.getBook(id)
-                if (book == null) {
-                    BookshelfDetailUiState.Error
-                } else {
-                    BookshelfDetailUiState.Success(book)
-                }
-            } catch (e: IOException) {
-                BookshelfDetailUiState.Error
-            } catch (e: HttpException) {
-                BookshelfDetailUiState.Error
             }
         }
     }

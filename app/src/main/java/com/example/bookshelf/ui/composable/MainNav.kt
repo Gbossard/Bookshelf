@@ -20,6 +20,7 @@ import com.example.bookshelf.R
 import com.example.bookshelf.ui.navigation.Screen
 import com.example.bookshelf.ui.screens.BookDetailsScreen
 import com.example.bookshelf.ui.screens.BookListScreen
+import com.example.bookshelf.ui.screens.BookshelfDetailsViewModel
 import com.example.bookshelf.ui.screens.BookshelfViewModel
 import com.example.bookshelf.ui.screens.HomeScreen
 
@@ -28,6 +29,7 @@ fun MainNav() {
     val navController = rememberNavController()
     val bottomBarState = remember { mutableStateOf(true) }
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
+    val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = BookshelfDetailsViewModel.Factory)
 
     Scaffold(
         bottomBar = {
@@ -57,9 +59,9 @@ fun MainNav() {
                 )
             }
             composable(Screen.Details.routes) {
-                bookshelfViewModel.getBook(bookshelfViewModel.selectedBookId)
+                bookshelfDetailsViewModel.getBook(bookshelfViewModel.selectedBookId)
                 BookDetailsScreen(
-                    viewModel = bookshelfViewModel,
+                    viewModel = bookshelfDetailsViewModel,
                     contentPadding = contentPadding,
                     bottomBarState = bottomBarState,
                     onGoBack = {

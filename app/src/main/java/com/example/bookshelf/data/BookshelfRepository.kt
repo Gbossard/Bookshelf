@@ -1,11 +1,12 @@
 package com.example.bookshelf.data
 
-import android.util.Log
 import com.example.bookshelf.model.Book
 import com.example.bookshelf.network.BookshelfApiService
 
 interface BookshelfRepository {
     suspend fun getBooks(query: String): List<Book>?
+
+    suspend fun getBook(id: String): Book?
 }
 
 class NetworkBookshelfRepository(
@@ -20,10 +21,20 @@ class NetworkBookshelfRepository(
                 emptyList()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error get data", e)
             null
         }
     }
 
-    private val TAG = "NetworkBookshelfRepository"
+    override suspend fun getBook(id: String): Book? {
+        return try {
+            val response = bookshelfApiService.getBook(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

@@ -12,6 +12,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelf.BookshelfApplication
 import com.example.bookshelf.data.BookshelfRepository
 import com.example.bookshelf.model.Book
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -23,15 +25,15 @@ sealed interface BookshelfUiState {
 }
 
 class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
-    var bookshelfUiState: BookshelfUiState by mutableStateOf(BookshelfUiState.Loading)
-        private set
+    private val _bookshelfUiState = MutableStateFlow<BookshelfUiState>(BookshelfUiState.Loading)
+    val bookshelfUiState: StateFlow<BookshelfUiState> = _bookshelfUiState
 
     var selectedBookId by mutableStateOf("")
 
     fun getBooks(query: String = "travel+newZealand") {
         viewModelScope.launch {
-            bookshelfUiState = BookshelfUiState.Loading
-            bookshelfUiState = try {
+            _bookshelfUiState.value = BookshelfUiState.Loading
+            _bookshelfUiState.value = try {
                 val books = bookshelfRepository.getBooks(query)
                 if (books == null ) {
                     BookshelfUiState.Error

@@ -1,6 +1,7 @@
 package com.example.bookshelf.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.runtime.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +17,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,14 +45,19 @@ fun BookListScreen(
     modifier: Modifier = Modifier
 ) {
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
-    val bookshelfUiState = bookshelfViewModel.bookshelfUiState
+    val bookshelfUiState by bookshelfViewModel.bookshelfUiState.collectAsState()
+
     bottomBarState.value = true
+
+    LaunchedEffect(Unit) {
+        bookshelfViewModel.getBooks()
+    }
 
     when(bookshelfUiState) {
         is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is BookshelfUiState.Success ->
             BooksGridScreen(
-                books = bookshelfUiState.books,
+                books = (bookshelfUiState as BookshelfUiState.Success).books,
                 contentPadding = contentPadding,
                 modifier = modifier,
                 onGoDetails = onGoDetails

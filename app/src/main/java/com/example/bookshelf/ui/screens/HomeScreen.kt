@@ -250,8 +250,3 @@ fun HomePopularBooks(
         }
     }
 }
-
-@Composable
-fun SettingsScreen() {
-    Text("Écran des Paramètres", modifier = Modifier.fillMaxSize())
-}

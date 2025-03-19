@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +35,9 @@ import com.example.bookshelf.ui.composable.BoxImage
 
 @Composable
 fun HomeScreen(
-    bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    bottomBarState.value = true
     LazyColumn(
         contentPadding = contentPadding,
         modifier = modifier

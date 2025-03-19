@@ -38,12 +38,10 @@ fun BookDetailsScreen(
     viewModel: BookshelfDetailsViewModel,
     onGoBack: () -> Unit,
     retryAction: () -> Unit,
-    bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val bookshelfDetailsUiState by viewModel.bookshelfDetailsUiState.collectAsState()
-    bottomBarState.value = false
 
     when(bookshelfDetailsUiState) {
         is BookshelfDetailsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())

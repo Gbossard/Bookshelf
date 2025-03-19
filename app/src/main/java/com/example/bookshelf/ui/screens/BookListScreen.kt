@@ -40,14 +40,11 @@ import com.example.bookshelf.ui.composable.LoadingScreen
 fun BookListScreen(
     onGoDetails: (Book) -> Unit,
     retryAction: () -> Unit,
-    bottomBarState: MutableState<Boolean>,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
     val bookshelfUiState by bookshelfViewModel.bookshelfUiState.collectAsState()
-
-    bottomBarState.value = true
 
     LaunchedEffect(Unit) {
         bookshelfViewModel.getBooks()

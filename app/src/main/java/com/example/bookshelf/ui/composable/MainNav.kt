@@ -15,8 +15,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bookshelf.R
+import androidx.compose.runtime.*
 import com.example.bookshelf.ui.navigation.Screen
 import com.example.bookshelf.ui.screens.BookDetailsScreen
 import com.example.bookshelf.ui.screens.BookListScreen
@@ -31,6 +33,12 @@ fun MainNav() {
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
     val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = BookshelfDetailsViewModel.Factory)
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+    LaunchedEffect(navBackStackEntry) {
+        bottomBarState.value = navBackStackEntry?.destination?.route != Screen.Details.routes
+    }
+
     Scaffold(
         bottomBar = {
             if (bottomBarState.value) {
@@ -41,13 +49,11 @@ fun MainNav() {
         NavHost(navController = navController, startDestination = Screen.Home.routes) {
             composable(Screen.Home.routes) {
                 HomeScreen(
-                    bottomBarState = bottomBarState,
                     contentPadding = contentPadding
                 )
             }
             composable(Screen.BooksCategories.routes) {
                 BookListScreen(
-                    bottomBarState = bottomBarState,
                     contentPadding = contentPadding,
                     onGoDetails = { book ->
                         bookshelfViewModel.selectedBookId = book.id
@@ -63,7 +69,6 @@ fun MainNav() {
                 BookDetailsScreen(
                     viewModel = bookshelfDetailsViewModel,
                     contentPadding = contentPadding,
-                    bottomBarState = bottomBarState,
                     onGoBack = {
                         navController.popBackStack()
                     },

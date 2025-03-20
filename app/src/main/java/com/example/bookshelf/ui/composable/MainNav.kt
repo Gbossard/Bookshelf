@@ -90,14 +90,18 @@ fun BookshelfBottomAppBar(
             icon = { Icon(Icons.Rounded.Home, contentDescription = stringResource(R.string.home)) },
             selected = false,
             onClick = {
-                navController.navigate(Screen.Home.routes)
+                navController.navigate(Screen.Home.routes) {
+                    popUpTo(Screen.Home.routes) { inclusive = true }
+                }
             }
         )
         NavigationBarItem(
             icon = { Icon(painter = painterResource(R.drawable.ic_flight), contentDescription = stringResource(R.string.flight)) },
             selected = false,
             onClick = {
-                navController.navigate(Screen.BooksCategories.routes)
+                navController.navigate(Screen.BooksCategories.routes) {
+                    popUpTo(Screen.BooksCategories.routes) { inclusive = false}
+                }
             }
         )
     }

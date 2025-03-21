@@ -1,7 +1,6 @@
-package com.example.bookshelf.ui.screens
+package com.example.bookshelf.ui.screens.bookDetails
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,19 +18,29 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.fallback
 import com.example.bookshelf.R
 import com.example.bookshelf.model.Book
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
+import com.example.bookshelf.ui.composable.ParagraphText
 
 @Composable
 fun BookDetailsScreen(
@@ -77,9 +86,12 @@ fun DetailScreen(
             onGoBack = onGoBack,
             modifier = Modifier.align(alignment = Alignment.TopStart)
         )
-        BookDetailsButtonToBuy(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        if (book.saleInfo.buyLink?.isNotEmpty() == true) {
+            BookDetailsButtonToBuy(
+                buyLink = book.saleInfo.buyLink,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
     }
 }
 
@@ -106,25 +118,27 @@ fun BackButton(
 fun BookDetailsCard(
     book: Book
 ) {
-    Column {
-        BookDetailsHeader()
-        BookDetailsDescription(book)
-    }
+    BookDetailsHeader(book)
+    BookDetailsDescription(book)
 }
 
 @Composable
 fun BookDetailsHeader(
+    book: Book,
+    modifier: Modifier = Modifier
 ) {
-    Box {
-        Image(
-            painter = painterResource(R.drawable.gaelle_cv),
-            contentDescription = stringResource(id = R.string.profile_photo),
+    Box(
+        modifier = modifier.size(450.dp).clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(book.volumeInfo.imageLinks?.httpsSmallThumbnail)
+                .crossfade(false)
+                .fallback(R.drawable.book)
+                .build(),
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(450.dp)
-                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                .background(MaterialTheme.colorScheme.secondary)
+            contentDescription = stringResource(R.string.book_image),
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -147,11 +161,16 @@ fun BookDetailsDescription(
             modifier = Modifier.padding(bottom = 16.dp)
         ) {
             Text(
-                text = stringResource(R.string.book_details_author),
-                style = MaterialTheme.typography.bodySmall
+                text = book.volumeInfo.authors?.joinToString(", ") ?:
+                stringResource(R.string.book_details_unknown_author),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = stringResource(R.string.book_details_date) ,
+                text = " - " + if (book.volumeInfo.publishedDate == "") {
+                    stringResource(R.string.book_details_unknown_date)
+                } else book.volumeInfo.publishedDate,
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -161,10 +180,18 @@ fun BookDetailsDescription(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 8.dp)
         )
-        Text(
-            text = stringResource(R.string.book_details_description),
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (book.volumeInfo.description?.isNotEmpty() == true) {
+            ParagraphText(
+                text = book.volumeInfo.description.toString()
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.book_details_description_unknown),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = modifier.padding(bottom = 8.dp)
+            )
+        }
+
         Text(
             text = stringResource(R.string.book_details_information),
             style = MaterialTheme.typography.headlineSmall,
@@ -173,20 +200,23 @@ fun BookDetailsDescription(
         )
         RowDetailsInformation(
             titleText = stringResource(R.string.book_details_publisher),
-            bodyText = stringResource(R.string.book_details_publisher)
+            bodyText = book.volumeInfo.publisher ?:
+                stringResource(R.string.book_details_unknown_publisher)
         )
         RowDetailsInformation(
             titleText = stringResource(R.string.book_details_page_count),
-            bodyText = stringResource(R.string.book_details_page_count)
+            bodyText = book.volumeInfo.pageCount.toString()
         )
-        RowDetailsInformation(
-            titleText = stringResource(R.string.book_details_isbn_10),
-            bodyText = stringResource(R.string.book_details_isbn_10)
-        )
-        RowDetailsInformation(
-            titleText = stringResource(R.string.book_details_isbn_13),
-            bodyText = stringResource(R.string.book_details_isbn_13)
-        )
+        book.volumeInfo.industryIdentifiers?.forEach { it ->
+            RowDetailsInformation(
+                titleText = if (it.type.contains("ISBN_10")) {
+                    stringResource(R.string.book_details_isbn_10)
+                } else {
+                    stringResource(R.string.book_details_isbn_13)
+                },
+                bodyText = it.identifier.toString()
+            )
+        }
     }
 }
 
@@ -215,13 +245,16 @@ fun RowDetailsInformation(
 
 @Composable
 fun BookDetailsButtonToBuy(
+    buyLink: String,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val webIntent = Intent(Intent.ACTION_VIEW, buyLink.toUri())
     ExtendedFloatingActionButton(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
-        onClick = { },
+        onClick = { context.startActivity(webIntent) },
     ) {
         Text(
             text = stringResource(R.string.book_details_button_to_buy),

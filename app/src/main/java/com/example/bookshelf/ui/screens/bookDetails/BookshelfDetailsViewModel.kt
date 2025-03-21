@@ -1,4 +1,4 @@
-package com.example.bookshelf.ui.screens
+package com.example.bookshelf.ui.screens.bookDetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +26,14 @@ class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfReposi
         BookshelfDetailsUiState.Loading)
     val bookshelfDetailsUiState: StateFlow<BookshelfDetailsUiState> = _bookshelfDetailsUiState
 
+    private var currentBookId: String? = null
+
     fun getBook(id: String) {
+        if (currentBookId == id) {
+            return
+        }
+
+        currentBookId = id
         viewModelScope.launch {
             _bookshelfDetailsUiState.value = try {
                 val book = bookshelfRepository.getBook(id)

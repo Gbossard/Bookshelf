@@ -1,7 +1,6 @@
-package com.example.bookshelf.ui.screens
+package com.example.bookshelf.ui.screens.bookList
 
 import androidx.compose.foundation.Image
-import androidx.compose.runtime.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,8 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.fallback
 import com.example.bookshelf.R
 import com.example.bookshelf.model.Book
 import com.example.bookshelf.ui.composable.ErrorScreen
@@ -45,10 +47,6 @@ fun BookListScreen(
 ) {
     val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
     val bookshelfUiState by bookshelfViewModel.bookshelfUiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        bookshelfViewModel.getBooks()
-    }
 
     when(bookshelfUiState) {
         is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
@@ -74,11 +72,11 @@ fun BooksGridScreen(
     LazyVerticalStaggeredGrid(
         modifier = modifier.fillMaxSize().padding(16.dp),
         contentPadding = contentPadding,
-        columns = StaggeredGridCells.Adaptive(minSize = 150.dp),
+        columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp,
     ) {
-        items(items = books, key = { book -> book.id}) { book ->
+        items(items = books, key = { it.id }) { book ->
             if (book.volumeInfo.imageLinks?.thumbnail ==  null) {
                 Box(
                     contentAlignment = Alignment.Center,
@@ -92,7 +90,7 @@ fun BooksGridScreen(
                         painter = painterResource(R.drawable.book),
                         contentScale = ContentScale.Crop,
                         alpha = 0.3f,
-                        contentDescription = stringResource(R.string.loading_failed)
+                        contentDescription = stringResource(R.string.book_unknown_image)
                     )
                     Text(
                         text = book.volumeInfo.title,
@@ -104,11 +102,12 @@ fun BooksGridScreen(
             } else {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(book.volumeInfo.imageLinks.httpsThumbnail)
+                        .data(book.volumeInfo.imageLinks.httpsSmallThumbnail)
                         .crossfade(true)
+                        .fallback(R.drawable.book)
                         .build(),
                     contentScale = ContentScale.Crop,
-                    contentDescription = stringResource(R.string.book_details_description),
+                    contentDescription = stringResource(R.string.book_image),
                     modifier = Modifier.fillMaxWidth().clickable { onGoDetails(book) }.clip(RoundedCornerShape(24.dp))
                 )
             }

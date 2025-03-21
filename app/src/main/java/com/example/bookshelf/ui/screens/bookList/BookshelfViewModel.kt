@@ -1,4 +1,4 @@
-package com.example.bookshelf.ui.screens
+package com.example.bookshelf.ui.screens.bookList
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +29,10 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
     val bookshelfUiState: StateFlow<BookshelfUiState> = _bookshelfUiState
 
     var selectedBookId by mutableStateOf("")
+
+    init {
+        getBooks()
+    }
 
     fun getBooks(query: String = "travel+newZealand") {
         viewModelScope.launch {

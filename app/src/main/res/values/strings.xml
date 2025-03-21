@@ -17,15 +17,19 @@
     <string name="latest_releases">Latest releases</string>
     <string name="category">Category</string>
 
+    <string name="book_image">Image of the book</string>
+    <string name="book_unknown_image">Image not available for this book</string>
+
     <string name="book_details_title">Title of the book</string>
-    <string name="book_details_author">Author</string>
-    <string name="book_details_date"> - 2025</string>
+    <string name="book_details_unknown_author">Author not available for this book</string>
+    <string name="book_details_unknown_date">Date not available for this book</string>
 
     <string name="book_details_description_title">Summary</string>
-    <string name="book_details_description">Vous souhaitez réussir ? Mieux que vous ne l\'auriez cru possible ? Mieux encore que dans vos rêves ? Lisez ce livre. Vous y parviendrez.
-        Finis les tours de passe-passe et les exagérations ! Vous trouverez dans L\'Effet cumulé ce que vous devez maîtriser et mettre en pratique pour obtenir un succès hors du commun et durable.</string>
+    <string name="book_details_description_unknown">Description not available for this book</string>
+
     <string name="book_details_information">Informations</string>
     <string name="book_details_publisher">Publisher</string>
+    <string name="book_details_unknown_publisher">Publisher not available for this book</string>
     <string name="book_details_page_count">Page Count</string>
     <string name="book_details_isbn_10">ISBN-10</string>
     <string name="book_details_isbn_13">ISBN-13</string>

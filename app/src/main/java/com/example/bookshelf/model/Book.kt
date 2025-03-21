@@ -23,7 +23,9 @@ data class VolumeInfo(
     val publisher: String?  = "",
     val publishedDate: String,
     val description: String?  = "",
-    val imageLinks: ImageLinks? = null
+    val imageLinks: ImageLinks? = null,
+    val pageCount: Int,
+    val industryIdentifiers: List<IndustryIdentifiers>? = listOf(),
 )
 
 @Serializable
@@ -33,8 +35,16 @@ data class ImageLinks(
 ) {
     val httpsThumbnail: String?
         get() = thumbnail?.replace("http", "https")
+    val httpsSmallThumbnail: String?
+        get() = smallThumbnail?.replace("http", "https")
 
 }
+
+@Serializable
+data class IndustryIdentifiers(
+    val type: String,
+    val identifier: String
+)
 
 @Serializable
 data class SaleInfo(

@@ -12,8 +12,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelf.BookshelfApplication
 import com.example.bookshelf.data.BookshelfRepository
 import com.example.bookshelf.model.Book
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -25,8 +23,8 @@ sealed interface BookshelfUiState {
 }
 
 class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
-    private val _bookshelfUiState = MutableStateFlow<BookshelfUiState>(BookshelfUiState.Loading)
-    val bookshelfUiState: StateFlow<BookshelfUiState> = _bookshelfUiState
+    var bookshelfUiState: BookshelfUiState by mutableStateOf(BookshelfUiState.Loading)
+        private set
 
     var selectedBookId by mutableStateOf("")
 
@@ -35,16 +33,20 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
     }
 
     fun getBooks(query: String = "travel+newZealand") {
+        bookshelfUiState = BookshelfUiState.Loading
         viewModelScope.launch {
-            _bookshelfUiState.value = BookshelfUiState.Loading
-            _bookshelfUiState.value = try {
+            try {
                 val books = bookshelfRepository.getBooks(query)
-                if (books == null ) {
-                    BookshelfUiState.Error
-                } else if (books.isEmpty()) {
-                    BookshelfUiState.Success(emptyList())
-                } else {
-                    BookshelfUiState.Success(books)
+                bookshelfUiState = when {
+                    books == null -> {
+                        BookshelfUiState.Error
+                    }
+                    books.isEmpty() -> {
+                        BookshelfUiState.Success(emptyList())
+                    }
+                    else -> {
+                        BookshelfUiState.Success(books)
+                    }
                 }
             } catch (e: IOException) {
                 BookshelfUiState.Error

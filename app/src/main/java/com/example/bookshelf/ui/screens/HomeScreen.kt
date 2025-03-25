@@ -35,11 +35,9 @@ import com.example.bookshelf.ui.composable.BoxImage
 
 @Composable
 fun HomeScreen(
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        contentPadding = contentPadding,
         modifier = modifier
             .fillMaxSize()
     ) {

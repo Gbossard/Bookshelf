@@ -47,7 +47,7 @@ fun BookDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     when(bookshelfDetailsUiState) {
-        is BookshelfDetailsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is BookshelfDetailsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize(), isList = false)
         is BookshelfDetailsUiState.Success ->
             DetailScreen(
                 modifier = modifier,

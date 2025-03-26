@@ -44,7 +44,7 @@ fun BookListScreen(
     retryAction: () -> Unit,
 ) {
     when(bookshelfUiState) {
-        is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize(), isList = true)
         is BookshelfUiState.Success ->
             BooksGridScreen(
                 books = bookshelfUiState.books,
@@ -75,7 +75,6 @@ fun BooksGridScreen(
                 ) {
                     Image(
                         modifier = modifier
-                            .size(275.dp)
                             .clip(RoundedCornerShape(24.dp))
                             .background(MaterialTheme.colorScheme.secondary),
                         painter = painterResource(R.drawable.book),

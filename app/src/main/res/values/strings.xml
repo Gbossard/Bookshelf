@@ -18,18 +18,18 @@
     <string name="category">Category</string>
 
     <string name="book_image">Image of the book</string>
-    <string name="book_unknown_image">Image not available for this book</string>
+    <string name="book_unknown_image">Image unknown</string>
 
     <string name="book_details_title">Title of the book</string>
-    <string name="book_details_unknown_author">Author not available for this book</string>
-    <string name="book_details_unknown_date">Date not available for this book</string>
+    <string name="book_details_unknown_author">Author unknown</string>
+    <string name="book_details_unknown_date">Date unknown</string>
 
     <string name="book_details_description_title">Summary</string>
-    <string name="book_details_description_unknown">Description not available for this book</string>
+    <string name="book_details_description_unknown">Description unknown</string>
 
     <string name="book_details_information">Informations</string>
     <string name="book_details_publisher">Publisher</string>
-    <string name="book_details_unknown_publisher">Publisher not available for this book</string>
+    <string name="book_details_unknown_publisher">Publisher unknown</string>
     <string name="book_details_page_count">Page Count</string>
     <string name="book_details_isbn_10">ISBN-10</string>
     <string name="book_details_isbn_13">ISBN-13</string>

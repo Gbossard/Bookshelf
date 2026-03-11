@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
+private const val TAG = "BookshelfDetailsViewModel"
+
 sealed interface BookshelfDetailsUiState {
     data class Success(val book: Book) : BookshelfDetailsUiState
     object Error: BookshelfDetailsUiState
@@ -47,16 +49,18 @@ class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfReposi
                         BookshelfDetailsUiState.Success(book)
                     }
                 }
-            } catch (e: IOException) {
-                BookshelfDetailsUiState.Error
-            } catch (e: HttpException) {
-                BookshelfDetailsUiState.Error
+            } catch (error: IOException) {
+                Log.e(TAG, "Error in getBook: ${error.message}", error)
+                bookshelfDetailsUiState = BookshelfDetailsUiState.Error
+            } catch (error: HttpException) {
+                Log.e(TAG, "Error in getBook: ${error.message}", error)
+                bookshelfDetailsUiState = BookshelfDetailsUiState.Error
             }
         }
     }
 
     fun retryGetBook(id: String) {
-        Log.d("BookshelfDetailsViewModel", "Retrying to fetch book with id: $id")
+        Log.d(TAG, "Retrying to fetch book with id: $id")
         bookshelfDetailsUiState = BookshelfDetailsUiState.Loading
         currentBookId = null
         getBook(id)

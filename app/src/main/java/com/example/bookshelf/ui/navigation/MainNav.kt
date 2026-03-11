@@ -67,11 +67,14 @@ fun MainNav() {
                 )
             }
             composable(Screen.Details.routes) {
-                bookshelfDetailsViewModel.getBook(bookshelfViewModel.selectedBookId)
                 BookDetailsScreen(
                     bookshelfDetailsUiState = bookshelfDetailsViewModel.bookshelfDetailsUiState,
                     onGoBack = {
                         navController.popBackStack()
+                    },
+                    selectedBookId = bookshelfViewModel.selectedBookId,
+                    loadBook = {
+                        bookshelfDetailsViewModel.getBook(bookshelfViewModel.selectedBookId)
                     },
                     retryAction = {
                         bookshelfDetailsViewModel.retryGetBook(bookshelfViewModel.selectedBookId)

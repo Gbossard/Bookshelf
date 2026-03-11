@@ -84,7 +84,7 @@ fun DetailScreen(
             onGoBack = onGoBack,
             modifier = Modifier.align(alignment = Alignment.TopStart)
         )
-        if (book.saleInfo.buyLink?.isNotEmpty() == true) {
+        if (book.saleInfo?.buyLink?.isNotEmpty() == true) {
             BookDetailsButtonToBuy(
                 buyLink = book.saleInfo.buyLink,
                 modifier = Modifier.align(Alignment.BottomCenter)

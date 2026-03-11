@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -98,7 +96,7 @@ fun HomeSearch(
                         .background(MaterialTheme.colorScheme.primary)
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Search,
+                        painter = painterResource(R.drawable.ic_search_24dp),
                         contentDescription = stringResource(R.string.search_icon),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(8.dp)

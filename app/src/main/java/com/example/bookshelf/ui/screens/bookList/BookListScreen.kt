@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -16,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +41,14 @@ fun BookListScreen(
     modifier: Modifier = Modifier,
     bookshelfUiState: BookshelfUiState,
     onGoDetails: (Book) -> Unit,
-    retryAction: () -> Unit,
+    loadBooks: () -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        if (bookshelfUiState !is BookshelfUiState.Success) {
+            loadBooks()
+        }
+    }
+
     when(bookshelfUiState) {
         is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize(), isList = true)
         is BookshelfUiState.Success ->
@@ -51,7 +57,7 @@ fun BookListScreen(
                 modifier = modifier,
                 onGoDetails = onGoDetails
             )
-        is BookshelfUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+        is BookshelfUiState.Error -> ErrorScreen(loadBooks, modifier = modifier.fillMaxSize())
     }
 }
 
@@ -68,13 +74,14 @@ fun BooksGridScreen(
         verticalItemSpacing = 16.dp,
     ) {
         items(items = books, key = { it.id }) { book ->
-            if (book.volumeInfo.imageLinks?.thumbnail ==  null) {
+            val thumbnail = book.volumeInfo.imageLinks?.httpsSmallThumbnail ?: book.volumeInfo.imageLinks?.httpsThumbnail
+            if (thumbnail == null) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.clickable { onGoDetails(book) }
                 ) {
                     Image(
-                        modifier = modifier
+                        modifier = Modifier
                             .clip(RoundedCornerShape(24.dp))
                             .background(MaterialTheme.colorScheme.secondary),
                         painter = painterResource(R.drawable.book),
@@ -92,7 +99,7 @@ fun BooksGridScreen(
             } else {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(book.volumeInfo.imageLinks.httpsSmallThumbnail)
+                        .data(thumbnail)
                         .crossfade(true)
                         .fallback(R.drawable.book)
                         .build(),

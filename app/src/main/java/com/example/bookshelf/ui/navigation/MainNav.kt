@@ -61,7 +61,7 @@ fun MainNav() {
                         bookshelfViewModel.selectedBookId = book.id
                         navController.navigate(Screen.Details.routes)
                     },
-                    retryAction = {
+                    loadBooks = {
                         bookshelfViewModel.getBooks()
                     }
                 )

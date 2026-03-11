@@ -57,6 +57,7 @@ class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfReposi
 
     fun retryGetBook(id: String) {
         Log.d("BookshelfDetailsViewModel", "Retrying to fetch book with id: $id")
+        bookshelfDetailsUiState = BookshelfDetailsUiState.Loading
         currentBookId = null
         getBook(id)
     }

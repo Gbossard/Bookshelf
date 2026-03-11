@@ -4,16 +4,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseData(
-    val kind: String,
-    val totalItems: Int,
-    val items: List<Book>?
+    val kind: String? = null,
+    val totalItems: Int? = 0,
+    val items: List<Book>? = null
 )
 
 @Serializable
 data class Book(
     val id: String,
     val volumeInfo: VolumeInfo,
-    val saleInfo: SaleInfo
+    val saleInfo: SaleInfo? = null
 )
 
 @Serializable
@@ -21,10 +21,10 @@ data class VolumeInfo(
     val title: String,
     val authors: List<String>? = listOf(),
     val publisher: String?  = "",
-    val publishedDate: String,
+    val publishedDate: String? = "",
     val description: String?  = "",
     val imageLinks: ImageLinks? = null,
-    val pageCount: Int,
+    val pageCount: Int? = 0,
     val industryIdentifiers: List<IndustryIdentifiers>? = listOf(),
 )
 
@@ -42,8 +42,8 @@ data class ImageLinks(
 
 @Serializable
 data class IndustryIdentifiers(
-    val type: String,
-    val identifier: String
+    val type: String? = "",
+    val identifier: String? = ""
 )
 
 @Serializable

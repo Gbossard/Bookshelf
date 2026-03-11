@@ -1,8 +1,6 @@
-package com.example.bookshelf.ui.composable
+package com.example.bookshelf.ui.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,7 +20,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bookshelf.R
-import com.example.bookshelf.ui.navigation.Screen
 import com.example.bookshelf.ui.screens.HomeScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookDetailsScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookshelfDetailsViewModel
@@ -91,7 +88,7 @@ fun BookshelfBottomAppBar(
 ) {
     NavigationBar {
         NavigationBarItem(
-            icon = { Icon(Icons.Rounded.Home, contentDescription = stringResource(R.string.home)) },
+            icon = { Icon(painterResource(R.drawable.ic_home_24dp), contentDescription = stringResource(R.string.home)) },
             selected = false,
             onClick = {
                 navController.navigate(Screen.Home.routes) {

@@ -1,5 +1,6 @@
 package com.example.bookshelf.ui.screens.bookList
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
+private const val TAG = "BookshelfViewModel"
 sealed interface BookshelfUiState {
     data class Success(val books: List<Book>) : BookshelfUiState
     object Error: BookshelfUiState
@@ -27,10 +29,6 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
         private set
 
     var selectedBookId by mutableStateOf("")
-
-    init {
-        getBooks()
-    }
 
     fun getBooks(query: String = "travel+newZealand") {
         bookshelfUiState = BookshelfUiState.Loading
@@ -48,10 +46,12 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
                         BookshelfUiState.Success(books)
                     }
                 }
-            } catch (e: IOException) {
-                BookshelfUiState.Error
-            } catch (e: HttpException) {
-                BookshelfUiState.Error
+            } catch (error: IOException) {
+                Log.e(TAG, "Error in getBooks: ${error.message}", error)
+                bookshelfUiState = BookshelfUiState.Error
+            } catch (error: HttpException) {
+                Log.e(TAG, "Error in getBooks: ${error.message}", error)
+                bookshelfUiState = BookshelfUiState.Error
             }
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,11 +42,18 @@ import com.example.bookshelf.ui.composable.ParagraphText
 
 @Composable
 fun BookDetailsScreen(
+    selectedBookId: String,
     bookshelfDetailsUiState: BookshelfDetailsUiState,
     onGoBack: () -> Unit,
+    loadBook: () -> Unit,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    LaunchedEffect(selectedBookId) {
+        loadBook()
+    }
+
     when(bookshelfDetailsUiState) {
         is BookshelfDetailsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize(), isList = false)
         is BookshelfDetailsUiState.Success ->
@@ -199,7 +207,7 @@ fun BookDetailsDescription(
         )
         book.volumeInfo.industryIdentifiers?.forEach { it ->
             RowDetailsInformation(
-                titleText = if (it.type.contains("ISBN_10")) {
+                titleText = if (it.type?.contains("ISBN_10") == true) {
                     stringResource(R.string.book_details_isbn_10)
                 } else {
                     stringResource(R.string.book_details_isbn_13)

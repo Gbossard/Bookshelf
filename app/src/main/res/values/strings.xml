@@ -31,6 +31,7 @@
     <string name="book_details_publisher">Publisher</string>
     <string name="book_details_unknown_publisher">Publisher unknown</string>
     <string name="book_details_page_count">Page Count</string>
+    <string name="book_details_unknown_page_count">Page Count unknown</string>
     <string name="book_details_isbn_10">ISBN-10</string>
     <string name="book_details_isbn_13">ISBN-13</string>
 

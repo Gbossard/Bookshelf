@@ -4,17 +4,15 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -36,22 +35,25 @@ import coil3.request.crossfade
 import coil3.request.fallback
 import com.example.bookshelf.R
 import com.example.bookshelf.model.Book
+import com.example.bookshelf.model.IndustryIdentifiers
+import com.example.bookshelf.ui.composable.BackButton
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
 import com.example.bookshelf.ui.composable.ParagraphText
+import com.example.bookshelf.ui.composable.orUnknown
 
 @Composable
 fun BookDetailsScreen(
     selectedBookId: String,
     bookshelfDetailsUiState: BookshelfDetailsUiState,
     onGoBack: () -> Unit,
-    loadBook: () -> Unit,
+    loadBook: (String) -> Unit,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     LaunchedEffect(selectedBookId) {
-        loadBook()
+        loadBook(selectedBookId)
     }
 
     when(bookshelfDetailsUiState) {
@@ -73,20 +75,43 @@ fun DetailScreen(
     book: Book
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
     ) {
-        LazyColumn {
-            item {
-                BookDetailsCard(book)
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item(key = "header") {
+                BookDetailsHeaderImage(book.volumeInfo.imageLinks?.httpsThumbnail)
+            }
+            item(key = "title") {
+                BookDetailsTitle(title = book.volumeInfo.title)
+            }
+            item(key = "authorsAndDate") {
+                BookDetailsAuthorsAndDate(
+                    authors = book.volumeInfo.authors,
+                    publishedDate = book.volumeInfo.publishedDate
+                )
+            }
+            item(key = "description") {
+                BookDetailsDescription(book.volumeInfo.description)
+            }
+            item(key = "information") {
+                BookDetailsInformation(
+                    publisher = book.volumeInfo.publisher,
+                    pageCount = book.volumeInfo.pageCount,
+                    industryIdentifiers = book.volumeInfo.industryIdentifiers
+                )
             }
         }
         BackButton(
             onGoBack = onGoBack,
             modifier = Modifier.align(alignment = Alignment.TopStart)
         )
-        if (book.saleInfo?.buyLink?.isNotEmpty() == true) {
+        val buyLink = book.saleInfo?.buyLink
+        if (!buyLink.isNullOrEmpty()) {
             BookDetailsButtonToBuy(
-                buyLink = book.saleInfo.buyLink,
+                buyLink = buyLink,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }
@@ -94,43 +119,18 @@ fun DetailScreen(
 }
 
 @Composable
-fun BackButton(
-    onGoBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    FloatingActionButton(
-        modifier = modifier.padding(16.dp),
-        containerColor = MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.onBackground,
-        shape = CircleShape,
-        onClick = onGoBack
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.arrow_back_24dp),
-            contentDescription = stringResource(id = R.string.navigation_back)
-        )
-    }
-}
-
-@Composable
-fun BookDetailsCard(
-    book: Book
-) {
-    BookDetailsHeader(book)
-    BookDetailsDescription(book)
-}
-
-@Composable
-fun BookDetailsHeader(
-    book: Book,
+fun BookDetailsHeaderImage(
+    imageUri: String?,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.size(450.dp).clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+        modifier = modifier
+            .size(450.dp)
+            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(book.volumeInfo.imageLinks?.httpsSmallThumbnail)
+                .data(imageUri)
                 .crossfade(false)
                 .fallback(R.drawable.book)
                 .build(),
@@ -142,54 +142,74 @@ fun BookDetailsHeader(
 }
 
 @Composable
-fun BookDetailsDescription(
-    book: Book,
+fun BookDetailsTitle(
+    modifier: Modifier = Modifier,
+    title: String
+) {
+    Text(
+        text = title,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.displaySmall.copy(
+            hyphens = Hyphens.Auto,
+            lineBreak = LineBreak.Paragraph,
+            fontSize = 32.sp
+        ),
+        modifier = modifier.padding(horizontal = 16.dp)
+    )
+}
+
+@Composable
+fun BookDetailsAuthorsAndDate(
+    authors: List<String>?,
+    publishedDate: String?,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 80.dp)
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
         Text(
-            text = book.volumeInfo.title,
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            text = authors?.joinToString(", ").orUnknown(R.string.book_details_unknown_author),
+            style = MaterialTheme.typography.bodySmall,
         )
-        Row(
-            modifier = Modifier.padding(bottom = 16.dp)
-        ) {
-            Text(
-                text = book.volumeInfo.authors?.joinToString(", ") ?:
-                stringResource(R.string.book_details_unknown_author),
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = " - " + if (book.volumeInfo.publishedDate == "") {
-                    stringResource(R.string.book_details_unknown_date)
-                } else book.volumeInfo.publishedDate,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        Text(
+            text = publishedDate.orUnknown(R.string.book_details_unknown_date),
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@Composable
+fun BookDetailsDescription(
+    description: String?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
         Text(
             text = stringResource(R.string.book_details_description_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
         )
-        if (book.volumeInfo.description?.isNotEmpty() == true) {
-            ParagraphText(
-                text = book.volumeInfo.description.toString()
-            )
-        } else {
-            Text(
-                text = stringResource(R.string.book_details_description_unknown),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = modifier.padding(bottom = 8.dp)
-            )
-        }
+        ParagraphText(
+            text = description.orUnknown(R.string.book_details_description_unknown),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+    }
+}
 
+@Composable
+fun BookDetailsInformation(
+    publisher: String?,
+    pageCount: Int?,
+    industryIdentifiers: List<IndustryIdentifiers>?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
         Text(
             text = stringResource(R.string.book_details_information),
             style = MaterialTheme.typography.headlineSmall,
@@ -198,23 +218,27 @@ fun BookDetailsDescription(
         )
         RowDetailsInformation(
             titleText = stringResource(R.string.book_details_publisher),
-            bodyText = book.volumeInfo.publisher ?:
-                stringResource(R.string.book_details_unknown_publisher)
+            bodyText = publisher.orUnknown(R.string.book_details_unknown_publisher)
         )
         RowDetailsInformation(
             titleText = stringResource(R.string.book_details_page_count),
-            bodyText = book.volumeInfo.pageCount.toString()
+            bodyText = pageCount.toString().orUnknown(R.string.book_details_unknown_page_count)
         )
-        book.volumeInfo.industryIdentifiers?.forEach { it ->
+        industryIdentifiers?.forEach { identifier ->
             RowDetailsInformation(
-                titleText = if (it.type?.contains("ISBN_10") == true) {
-                    stringResource(R.string.book_details_isbn_10)
-                } else {
-                    stringResource(R.string.book_details_isbn_13)
-                },
-                bodyText = it.identifier.toString()
+                titleText = isbnTitle(identifier.type),
+                bodyText = identifier.identifier.orEmpty()
             )
         }
+    }
+}
+
+@Composable
+fun isbnTitle(type: String?): String {
+    return if (type?.contains("ISBN_10") == true) {
+        stringResource(R.string.book_details_isbn_10)
+    } else {
+        stringResource(R.string.book_details_isbn_13)
     }
 }
 

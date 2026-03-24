@@ -224,10 +224,10 @@ fun BookDetailsInformation(
             titleText = stringResource(R.string.book_details_page_count),
             bodyText = pageCount.toString().orUnknown(R.string.book_details_unknown_page_count)
         )
-        industryIdentifiers?.forEach { identifier ->
+        industryIdentifiers?.forEach { identifiers ->
             RowDetailsInformation(
-                titleText = isbnTitle(identifier.type),
-                bodyText = identifier.identifier.orEmpty()
+                titleText = isbnTitle(identifiers.type),
+                bodyText = identifiers.identifier.orEmpty()
             )
         }
     }

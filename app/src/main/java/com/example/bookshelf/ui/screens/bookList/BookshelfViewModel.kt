@@ -40,7 +40,7 @@ class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) :
                         BookshelfUiState.Error
                     }
                     books.isEmpty() -> {
-                        BookshelfUiState.Success(emptyList())
+                        BookshelfUiState.Error
                     }
                     else -> {
                         BookshelfUiState.Success(books)

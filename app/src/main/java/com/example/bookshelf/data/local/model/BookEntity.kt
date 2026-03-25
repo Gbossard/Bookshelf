@@ -1,4 +1,4 @@
-package com.example.bookshelf.model.local
+package com.example.bookshelf.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

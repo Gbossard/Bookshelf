@@ -4,7 +4,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.bookshelf.model.local.BookEntity
+import com.example.bookshelf.data.local.model.BookEntity
 import kotlinx.coroutines.flow.Flow
 
 interface BookDao {

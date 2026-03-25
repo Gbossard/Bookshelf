@@ -11,8 +11,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelf.BookshelfApplication
-import com.example.bookshelf.data.BookshelfRepository
-import com.example.bookshelf.model.Book
+import com.example.bookshelf.data.repository.BookshelfRepository
+import com.example.bookshelf.data.network.model.Book
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException

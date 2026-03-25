@@ -1,8 +1,8 @@
-package com.example.bookshelf.data
+package com.example.bookshelf.data.repository
 
 import android.util.Log
-import com.example.bookshelf.model.Book
-import com.example.bookshelf.network.BookshelfApiService
+import com.example.bookshelf.data.network.model.Book
+import com.example.bookshelf.data.network.BookshelfApiService
 
 private const val TAG = "BookshelfRepository"
 interface BookshelfRepository {

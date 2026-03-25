@@ -34,8 +34,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.fallback
 import com.example.bookshelf.R
-import com.example.bookshelf.model.Book
-import com.example.bookshelf.model.IndustryIdentifiers
+import com.example.bookshelf.data.network.model.Book
+import com.example.bookshelf.data.network.model.IndustryIdentifiers
 import com.example.bookshelf.ui.composable.BackButton
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen

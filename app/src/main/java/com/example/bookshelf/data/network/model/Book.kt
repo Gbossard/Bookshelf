@@ -1,4 +1,4 @@
-package com.example.bookshelf.model
+package com.example.bookshelf.data.network.model
 
 import kotlinx.serialization.Serializable
 

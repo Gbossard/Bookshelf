@@ -1,9 +1,6 @@
 package com.example.bookshelf.ui.screens.bookDetails
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -11,60 +8,74 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelf.BookshelfApplication
+import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
-import com.example.bookshelf.data.network.model.Book
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import retrofit2.HttpException
 import java.io.IOException
 
 private const val TAG = "BookshelfDetailsViewModel"
 
 sealed interface BookshelfDetailsUiState {
-    data class Success(val book: Book) : BookshelfDetailsUiState
+    data class Success(val book: BookEntity) : BookshelfDetailsUiState
     object Error: BookshelfDetailsUiState
     object Loading: BookshelfDetailsUiState
 }
 
 class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
-    var bookshelfDetailsUiState: BookshelfDetailsUiState by mutableStateOf(BookshelfDetailsUiState.Loading)
-        private set
+    private val _selectedBookId = MutableStateFlow<String?>(null)
 
-    private var currentBookId: String? = null
-
-    fun getBook(id: String) {
-        if (currentBookId == id) {
-            return
-        }
-
-        currentBookId = id
-        bookshelfDetailsUiState = BookshelfDetailsUiState.Loading
-        viewModelScope.launch {
-            try {
-                val book = bookshelfRepository.getBook(id)
-                bookshelfDetailsUiState = when {
-                    book == null -> {
-                        BookshelfDetailsUiState.Error
-                    }
-                    else -> {
-                        BookshelfDetailsUiState.Success(book)
-                    }
+    @OptIn( ExperimentalCoroutinesApi::class)
+    val uiState: StateFlow<BookshelfDetailsUiState> = _selectedBookId
+        .filterNotNull()
+        .flatMapLatest { id ->
+            flow {
+                val localBook = bookshelfRepository.getBookByIdFlow(id).firstOrNull()
+                if (localBook == null) {
+                    emit(BookshelfDetailsUiState.Loading)
                 }
-            } catch (error: IOException) {
-                Log.e(TAG, "Error in getBook: ${error.message}", error)
-                bookshelfDetailsUiState = BookshelfDetailsUiState.Error
-            } catch (error: HttpException) {
-                Log.e(TAG, "Error in getBook: ${error.message}", error)
-                bookshelfDetailsUiState = BookshelfDetailsUiState.Error
+                try {
+                    bookshelfRepository.getBookById(id)
+                } catch (error: IOException) {
+                    Log.e(TAG, "Network error getBookById", error)
+                    emit(BookshelfDetailsUiState.Error)
+                } catch (error: HttpException) {
+                    Log.e(TAG, "HTTP error getBookById", error)
+                    emit(BookshelfDetailsUiState.Error)
+                } catch (error: Exception) {
+                    Log.e(TAG, "Error getBookById", error)
+                    emit(BookshelfDetailsUiState.Error)
+                }
+
+                emitAll(
+                    bookshelfRepository.getBookByIdFlow(id).map { book ->
+                        if (book == null) BookshelfDetailsUiState.Error
+                        else BookshelfDetailsUiState.Success(book)
+                    }
+                )
             }
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = BookshelfDetailsUiState.Loading
+        )
+
+    fun getBook(id: String) {
+        if (_selectedBookId.value == id) return
+        _selectedBookId.value = id
     }
 
-    fun retryGetBook(id: String) {
-        Log.d(TAG, "Retrying to fetch book with id: $id")
-        bookshelfDetailsUiState = BookshelfDetailsUiState.Loading
-        currentBookId = null
-        getBook(id)
-    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

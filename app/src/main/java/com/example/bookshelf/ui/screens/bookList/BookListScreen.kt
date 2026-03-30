@@ -31,7 +31,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.fallback
 import com.example.bookshelf.R
-import com.example.bookshelf.data.network.model.Book
+import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
 
@@ -40,7 +40,7 @@ import com.example.bookshelf.ui.composable.LoadingScreen
 fun BookListScreen(
     modifier: Modifier = Modifier,
     bookshelfUiState: BookshelfUiState,
-    onGoDetails: (Book) -> Unit,
+    onGoDetails: (BookEntity) -> Unit,
     loadBooks: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -63,8 +63,8 @@ fun BookListScreen(
 
 @Composable
 fun BooksGridScreen(
-    books: List<Book>,
-    onGoDetails: (Book) -> Unit,
+    books: List<BookEntity>,
+    onGoDetails: (BookEntity) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalStaggeredGrid(
@@ -74,7 +74,7 @@ fun BooksGridScreen(
         verticalItemSpacing = 16.dp,
     ) {
         items(items = books, key = { it.id }) { book ->
-            val thumbnail = book.volumeInfo.imageLinks?.httpsSmallThumbnail ?: book.volumeInfo.imageLinks?.httpsThumbnail
+            val thumbnail = book.thumbnail
             if (thumbnail == null) {
                 Box(
                     contentAlignment = Alignment.Center,
@@ -90,7 +90,7 @@ fun BooksGridScreen(
                         contentDescription = stringResource(R.string.book_unknown_image)
                     )
                     Text(
-                        text = book.volumeInfo.title,
+                        text = book.title,
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center

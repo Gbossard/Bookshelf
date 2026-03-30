@@ -34,8 +34,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.fallback
 import com.example.bookshelf.R
-import com.example.bookshelf.data.network.model.Book
-import com.example.bookshelf.data.network.model.IndustryIdentifiers
+import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.ui.composable.BackButton
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
@@ -72,7 +71,7 @@ fun BookDetailsScreen(
 fun DetailScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    book: Book
+    book: BookEntity
 ) {
     Box(
         modifier = modifier.fillMaxSize()
@@ -82,25 +81,26 @@ fun DetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item(key = "header") {
-                BookDetailsHeaderImage(book.volumeInfo.imageLinks?.httpsThumbnail)
+                BookDetailsHeaderImage(book.thumbnail)
             }
             item(key = "title") {
-                BookDetailsTitle(title = book.volumeInfo.title)
+                BookDetailsTitle(title = book.title)
             }
             item(key = "authorsAndDate") {
                 BookDetailsAuthorsAndDate(
-                    authors = book.volumeInfo.authors,
-                    publishedDate = book.volumeInfo.publishedDate
+                    authors = book.authors,
+                    publishedDate = book.publishedDate
                 )
             }
             item(key = "description") {
-                BookDetailsDescription(book.volumeInfo.description)
+                BookDetailsDescription(book.description)
             }
             item(key = "information") {
                 BookDetailsInformation(
-                    publisher = book.volumeInfo.publisher,
-                    pageCount = book.volumeInfo.pageCount,
-                    industryIdentifiers = book.volumeInfo.industryIdentifiers
+                    publisher = book.publishers,
+                    pageCount = book.pageCount,
+                    isbn10 = book.isbn10,
+                    isbn13 = book.isbn13
                 )
             }
         }
@@ -108,7 +108,7 @@ fun DetailScreen(
             onGoBack = onGoBack,
             modifier = Modifier.align(alignment = Alignment.TopStart)
         )
-        val buyLink = book.saleInfo?.buyLink
+        val buyLink = book.buyLink
         if (!buyLink.isNullOrEmpty()) {
             BookDetailsButtonToBuy(
                 buyLink = buyLink,
@@ -161,7 +161,7 @@ fun BookDetailsTitle(
 
 @Composable
 fun BookDetailsAuthorsAndDate(
-    authors: List<String>?,
+    authors: String?,
     publishedDate: String?,
     modifier: Modifier = Modifier
 ) {
@@ -169,7 +169,7 @@ fun BookDetailsAuthorsAndDate(
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
         Text(
-            text = authors?.joinToString(", ").orUnknown(R.string.book_details_unknown_author),
+            text = authors.orUnknown(R.string.book_details_unknown_author),
             style = MaterialTheme.typography.bodySmall,
         )
         Text(
@@ -204,7 +204,8 @@ fun BookDetailsDescription(
 fun BookDetailsInformation(
     publisher: String?,
     pageCount: Int?,
-    industryIdentifiers: List<IndustryIdentifiers>?,
+    isbn10: String?,
+    isbn13: String?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -224,21 +225,14 @@ fun BookDetailsInformation(
             titleText = stringResource(R.string.book_details_page_count),
             bodyText = pageCount.toString().orUnknown(R.string.book_details_unknown_page_count)
         )
-        industryIdentifiers?.forEach { identifiers ->
-            RowDetailsInformation(
-                titleText = isbnTitle(identifiers.type),
-                bodyText = identifiers.identifier.orEmpty()
-            )
-        }
-    }
-}
-
-@Composable
-fun isbnTitle(type: String?): String {
-    return if (type?.contains("ISBN_10") == true) {
-        stringResource(R.string.book_details_isbn_10)
-    } else {
-        stringResource(R.string.book_details_isbn_13)
+        RowDetailsInformation(
+            titleText = stringResource(R.string.book_details_isbn_10),
+            bodyText = isbn10.orUnknown(R.string.book_details_unknown_isbn_10)
+        )
+        RowDetailsInformation(
+            titleText = stringResource(R.string.book_details_isbn_13),
+            bodyText = isbn13.orUnknown(R.string.book_details_unknown_isbn_13)
+        )
     }
 }
 

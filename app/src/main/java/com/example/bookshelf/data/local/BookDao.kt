@@ -1,12 +1,13 @@
 package com.example.bookshelf.data.local
 
-import androidx.room.Delete
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.bookshelf.data.local.model.BookEntity
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface BookDao {
     @Query("SELECT * FROM book_table")
     fun getAllBooks(): Flow<List<BookEntity>>
@@ -14,14 +15,17 @@ interface BookDao {
     @Query("SELECT * FROM book_table WHERE id = :id")
     suspend fun getBookById(id: String): BookEntity?
 
+    @Query("SELECT * FROM book_table WHERE id = :id")
+    fun getBookByIdFlow(id: String): Flow<BookEntity?>
+
     @Query("SELECT * FROM book_table WHERE isFavorite = 1")
     fun getAllFavorites(): Flow<List<BookEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addFavorite(book: BookEntity)
+    suspend fun upsertBook(book: BookEntity)
 
-    @Delete
-    suspend fun deleteFavorite(book: BookEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertBooks(books: List<BookEntity>)
 
     @Query("DELETE FROM book_table WHERE isFavorite = 0")
     suspend fun clearCache()

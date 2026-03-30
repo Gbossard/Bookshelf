@@ -14,7 +14,8 @@ data class BookEntity (
     val description: String?,
     val pageCount: Int?,
     val thumbnail: String?,
-    val isbn: String?,
+    val isbn10: String?,
+    val isbn13: String?,
     val buyLink: String?,
     val isFavorite: Boolean = false
 )

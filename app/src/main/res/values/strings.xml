@@ -33,7 +33,9 @@
     <string name="book_details_page_count">Page Count</string>
     <string name="book_details_unknown_page_count">Page Count unknown</string>
     <string name="book_details_isbn_10">ISBN-10</string>
+    <string name="book_details_unknown_isbn_10">ISBN-10 unknown</string>
     <string name="book_details_isbn_13">ISBN-13</string>
+    <string name="book_details_unknown_isbn_13">ISBN-13 unknown</string>
 
     <string name="book_details_button_to_buy">Buy the book</string>
 

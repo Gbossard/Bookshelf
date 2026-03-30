@@ -13,12 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.bookshelf.R
 import com.example.bookshelf.ui.screens.HomeScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookDetailsScreen
@@ -30,8 +33,6 @@ import com.example.bookshelf.ui.screens.bookList.BookshelfViewModel
 fun MainNav() {
     val navController = rememberNavController()
     val bottomBarState = remember { mutableStateOf(true) }
-    val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
-    val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = BookshelfDetailsViewModel.Factory)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -55,29 +56,39 @@ fun MainNav() {
                 HomeScreen()
             }
             composable(Screen.BooksCategories.routes) {
+                val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
+                val bookshelfUiState by bookshelfViewModel.uiState.collectAsStateWithLifecycle()
+
                 BookListScreen(
-                    bookshelfUiState = bookshelfViewModel.bookshelfUiState,
+                    bookshelfUiState = bookshelfUiState,
                     onGoDetails = { book ->
-                        bookshelfViewModel.selectedBookId = book.id
-                        navController.navigate(Screen.Details.routes)
+                        navController.navigate(Screen.Details.createRoute(book.id))
                     },
                     loadBooks = {
-                        bookshelfViewModel.getBooks()
+                        bookshelfViewModel.updateSearch()
                     }
                 )
             }
-            composable(Screen.Details.routes) {
+            composable(
+                route = Screen.Details.routes,
+                arguments = listOf(navArgument("selectedBookId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val selectedBookId = backStackEntry.arguments?.getString("selectedBookId") ?: ""
+
+                val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = BookshelfDetailsViewModel.Factory)
+                val bookshelfDetailsUiState by bookshelfDetailsViewModel.uiState.collectAsStateWithLifecycle()
+
                 BookDetailsScreen(
-                    bookshelfDetailsUiState = bookshelfDetailsViewModel.bookshelfDetailsUiState,
+                    bookshelfDetailsUiState = bookshelfDetailsUiState,
                     onGoBack = {
                         navController.popBackStack()
                     },
-                    selectedBookId = bookshelfViewModel.selectedBookId,
-                    loadBook = {
-                        bookshelfDetailsViewModel.getBook(bookshelfViewModel.selectedBookId)
+                    selectedBookId = selectedBookId,
+                    loadBook = { id ->
+                        bookshelfDetailsViewModel.getBook(id)
                     },
                     retryAction = {
-                        bookshelfDetailsViewModel.retryGetBook(bookshelfViewModel.selectedBookId)
+                        bookshelfDetailsViewModel.getBook(selectedBookId)
                     }
                 )
             }

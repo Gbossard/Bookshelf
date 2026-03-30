@@ -1,8 +1,10 @@
 package com.example.bookshelf.data
 
-import com.example.bookshelf.data.repository.BookshelfRepository
-import com.example.bookshelf.data.repository.NetworkBookshelfRepository
+import android.content.Context
+import com.example.bookshelf.data.local.BookDatabase
 import com.example.bookshelf.data.network.BookshelfApiService
+import com.example.bookshelf.data.repository.BookshelfRepository
+import com.example.bookshelf.data.repository.DefaultBooksRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -12,9 +14,8 @@ interface AppContainer {
     val bookshelfRepository: BookshelfRepository
 }
 
-class DefaultAppContainer: AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
     private val baseUrl = "https://www.googleapis.com/books/v1/"
-
     private val json = Json {ignoreUnknownKeys = true}
 
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -26,7 +27,14 @@ class DefaultAppContainer: AppContainer {
         retrofit.create(BookshelfApiService::class.java)
     }
 
+    private val database: BookDatabase by lazy {
+        BookDatabase.getDatabase(context)
+    }
+
     override val bookshelfRepository: BookshelfRepository by lazy {
-        NetworkBookshelfRepository(retrofitService)
+        DefaultBooksRepository(
+            bookshelfApiService = retrofitService,
+            bookDao = database.bookDao()
+        )
     }
 }

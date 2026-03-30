@@ -38,7 +38,6 @@ import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.ui.composable.BackButton
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
-import com.example.bookshelf.ui.composable.ParagraphText
 import com.example.bookshelf.ui.composable.orUnknown
 
 @Composable
@@ -193,9 +192,10 @@ fun BookDetailsDescription(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
         )
-        ParagraphText(
+        Text(
             text = description.orUnknown(R.string.book_details_description_unknown),
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

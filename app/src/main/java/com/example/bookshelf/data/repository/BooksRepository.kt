@@ -33,11 +33,12 @@ class DefaultBooksRepository(
             if (response.isSuccessful) {
                 val items = response.body()?.items ?: emptyList()
 
-                val entities = items.map { networkBook ->
+                val entities = items.mapIndexed { index, networkBook ->
                     val existingBook = bookDao.getBookById(networkBook.id)
-                    val isFavorite = existingBook?.isFavorite ?: false
-
-                    networkBook.toEntity(isFavorite = isFavorite)
+                    networkBook.toEntity(
+                        isFavorite = existingBook?.isFavorite ?: false,
+                        searchOrder = index
+                    )
                 }
                 bookDao.clearCache()
                 bookDao.upsertBooks(entities)

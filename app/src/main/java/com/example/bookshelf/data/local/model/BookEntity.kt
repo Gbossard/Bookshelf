@@ -17,5 +17,6 @@ data class BookEntity (
     val isbn10: String?,
     val isbn13: String?,
     val buyLink: String?,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val searchOrder: Int = 0
 )

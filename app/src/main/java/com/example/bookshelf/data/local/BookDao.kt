@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
-    @Query("SELECT * FROM book_table")
+    @Query("SELECT * FROM book_table ORDER BY searchOrder ASC")
     fun getAllBooks(): Flow<List<BookEntity>>
 
     @Query("SELECT * FROM book_table WHERE id = :id")

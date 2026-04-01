@@ -20,6 +20,9 @@
     <string name="book_image">Image of the book</string>
     <string name="book_unknown_image">Image unknown</string>
 
+    <string name="add_favorite_button_text">Add to favorites</string>
+    <string name="delete_favorite_button_text">Delete to favorites</string>
+
     <string name="book_details_title">Title of the book</string>
     <string name="book_details_unknown_author">Author unknown</string>
     <string name="book_details_unknown_date">Date unknown</string>

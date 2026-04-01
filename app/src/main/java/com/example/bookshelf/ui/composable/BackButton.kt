@@ -1,7 +1,6 @@
 package com.example.bookshelf.ui.composable
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,6 @@ fun BackButton(
         modifier = modifier.padding(16.dp),
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
-        shape = CircleShape,
         onClick = onGoBack
     ) {
         Icon(

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.Hyphens
@@ -42,12 +45,13 @@ import com.example.bookshelf.ui.composable.orUnknown
 
 @Composable
 fun BookDetailsScreen(
+    modifier: Modifier = Modifier,
     selectedBookId: String,
     bookshelfDetailsUiState: BookshelfDetailsUiState,
     onGoBack: () -> Unit,
     loadBook: (String) -> Unit,
     retryAction: () -> Unit,
-    modifier: Modifier = Modifier
+    onClickFavorite: (BookEntity) -> Unit
 ) {
 
     LaunchedEffect(selectedBookId) {
@@ -60,7 +64,8 @@ fun BookDetailsScreen(
             DetailScreen(
                 modifier = modifier,
                 onGoBack = onGoBack,
-                book = bookshelfDetailsUiState.book
+                book = bookshelfDetailsUiState.book,
+                onClickFavorite = onClickFavorite
             )
         is BookshelfDetailsUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
     }
@@ -70,6 +75,7 @@ fun BookDetailsScreen(
 fun DetailScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    onClickFavorite: (BookEntity) -> Unit,
     book: BookEntity
 ) {
     Box(
@@ -80,7 +86,11 @@ fun DetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item(key = "header") {
-                BookDetailsHeaderImage(book.thumbnail)
+                BookDetailsHeaderImage(
+                    imageUri = book.thumbnail,
+                    isFavorite = book.isFavorite,
+                    onClickFavorite = { onClickFavorite(book) }
+                )
             }
             item(key = "title") {
                 BookDetailsTitle(title = book.title)
@@ -119,8 +129,10 @@ fun DetailScreen(
 
 @Composable
 fun BookDetailsHeaderImage(
+    modifier: Modifier = Modifier,
     imageUri: String?,
-    modifier: Modifier = Modifier
+    isFavorite: Boolean,
+    onClickFavorite: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -137,6 +149,19 @@ fun BookDetailsHeaderImage(
             contentDescription = stringResource(R.string.book_image),
             modifier = Modifier.fillMaxSize()
         )
+        FloatingActionButton(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp),
+            onClick = onClickFavorite
+        ) {
+            Icon(
+                painter = if (isFavorite) painterResource(R.drawable.ic_favorite_fill_24dp) else painterResource(R.drawable.ic_favorite_24dp),
+                contentDescription = if (isFavorite) stringResource(id = R.string.delete_favorite_button_text) else stringResource(id = R.string.add_favorite_button_text),
+            )
+        }
     }
 }
 

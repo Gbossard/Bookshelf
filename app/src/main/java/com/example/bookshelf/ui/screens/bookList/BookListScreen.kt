@@ -33,6 +33,7 @@ import coil3.request.fallback
 import com.example.bookshelf.R
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.ui.composable.ErrorScreen
+import com.example.bookshelf.ui.composable.FavoriteButton
 import com.example.bookshelf.ui.composable.LoadingScreen
 
 
@@ -42,6 +43,7 @@ fun BookListScreen(
     bookshelfUiState: BookshelfUiState,
     onGoDetails: (BookEntity) -> Unit,
     loadBooks: () -> Unit,
+    onClickFavorite: (BookEntity) -> Unit
 ) {
     LaunchedEffect(Unit) {
         if (bookshelfUiState !is BookshelfUiState.Success) {
@@ -55,7 +57,8 @@ fun BookListScreen(
             BooksGridScreen(
                 books = bookshelfUiState.books,
                 modifier = modifier,
-                onGoDetails = onGoDetails
+                onGoDetails = onGoDetails,
+                onClickFavorite = onClickFavorite
             )
         is BookshelfUiState.Error -> ErrorScreen(loadBooks, modifier = modifier.fillMaxSize())
     }
@@ -63,12 +66,15 @@ fun BookListScreen(
 
 @Composable
 fun BooksGridScreen(
+    modifier: Modifier = Modifier,
     books: List<BookEntity>,
     onGoDetails: (BookEntity) -> Unit,
-    modifier: Modifier = Modifier,
+    onClickFavorite: (BookEntity) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp,
@@ -95,18 +101,33 @@ fun BooksGridScreen(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     )
+                    FavoriteButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        isFavorite = book.isFavorite,
+                        onClickFavorite = { onClickFavorite(book) }
+                    )
                 }
             } else {
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(thumbnail)
-                        .crossfade(true)
-                        .fallback(R.drawable.book)
-                        .build(),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = stringResource(R.string.book_image),
-                    modifier = Modifier.fillMaxWidth().clickable { onGoDetails(book) }.clip(RoundedCornerShape(24.dp))
-                )
+                Box {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context = LocalContext.current)
+                            .data(thumbnail)
+                            .crossfade(true)
+                            .fallback(R.drawable.book)
+                            .build(),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = stringResource(R.string.book_image),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onGoDetails(book) }
+                            .clip(RoundedCornerShape(24.dp))
+                    )
+                    FavoriteButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        isFavorite = book.isFavorite,
+                        onClickFavorite = { onClickFavorite(book) }
+                    )
+                }
             }
         }
     }

@@ -66,6 +66,9 @@ fun MainNav() {
                     },
                     loadBooks = {
                         bookshelfViewModel.updateSearch()
+                    },
+                    onClickFavorite = { book ->
+                        bookshelfViewModel.toggleFavorite(book)
                     }
                 )
             }
@@ -89,6 +92,9 @@ fun MainNav() {
                     },
                     retryAction = {
                         bookshelfDetailsViewModel.getBook(selectedBookId)
+                    },
+                    onClickFavorite = { book ->
+                        bookshelfDetailsViewModel.toggleFavorite(book)
                     }
                 )
             }

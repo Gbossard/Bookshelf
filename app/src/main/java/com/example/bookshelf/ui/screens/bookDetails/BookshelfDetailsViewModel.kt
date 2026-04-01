@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -76,6 +77,11 @@ class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfReposi
         _selectedBookId.value = id
     }
 
+    fun toggleFavorite(book: BookEntity) {
+        viewModelScope.launch {
+            bookshelfRepository.toggleFavorite(book)
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

@@ -14,8 +14,7 @@ interface BookshelfRepository {
     fun getBookByIdFlow(id: String): Flow<BookEntity?>
     suspend fun getBookById(id: String): BookEntity?
     fun getAllFavorites(): Flow<List<BookEntity>>
-    suspend fun addFavorite(book: BookEntity)
-    suspend fun deleteFavorite(book: BookEntity)
+    suspend fun toggleFavorite(book: BookEntity)
     suspend fun updateBookCache(book: BookEntity)
     suspend fun clearCache()
 }
@@ -73,11 +72,12 @@ class DefaultBooksRepository(
 
     override fun getBookByIdFlow(id: String): Flow<BookEntity?> {
         return bookDao.getBookByIdFlow(id)
-
     }
 
-    override suspend fun addFavorite(book: BookEntity) = bookDao.upsertBook(book.copy(isFavorite = true))
-    override suspend fun deleteFavorite(book: BookEntity) = bookDao.upsertBook(book.copy(isFavorite = false))
+    override suspend fun toggleFavorite(book: BookEntity) {
+        val updatedBook = book.copy(isFavorite = !book.isFavorite)
+        bookDao.upsertBook(updatedBook)
+    }
     override suspend fun updateBookCache(book: BookEntity) = bookDao.upsertBook(book)
     override suspend fun clearCache() = bookDao.clearCache()
 }

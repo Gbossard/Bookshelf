@@ -24,7 +24,7 @@ fun BookListScreen(
     }
 
     when(bookshelfUiState) {
-        is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize(), isList = true)
+        is BookshelfUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is BookshelfUiState.Success ->
             BooksGrid(
                 books = bookshelfUiState.books,

@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingScreen(
-    isList: Boolean,
     modifier: Modifier = Modifier,
+    isList: Boolean = true,
 ) {
     if (isList) {
         LoadingGridList(modifier = modifier)

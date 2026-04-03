@@ -28,6 +28,8 @@ import com.example.bookshelf.ui.screens.bookDetails.BookDetailsScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookshelfDetailsViewModel
 import com.example.bookshelf.ui.screens.bookList.BookListScreen
 import com.example.bookshelf.ui.screens.bookList.BookshelfViewModel
+import com.example.bookshelf.ui.screens.favorites.FavoriteScreen
+import com.example.bookshelf.ui.screens.favorites.FavoriteViewModel
 
 @Composable
 fun MainNav() {
@@ -98,6 +100,23 @@ fun MainNav() {
                     }
                 )
             }
+            composable(Screen.Favorites.routes) {
+                val favoriteViewModel: FavoriteViewModel = viewModel(factory = FavoriteViewModel.Factory)
+                val favoriteUiState by favoriteViewModel.uiState.collectAsStateWithLifecycle()
+
+                FavoriteScreen(
+                    favoriteUiState = favoriteUiState,
+                    onClickFavorite = { book ->
+                        favoriteViewModel.toggleFavorite(book)
+                    },
+                    onGoDetails = { book ->
+                        navController.navigate(Screen.Details.createRoute(book.id))
+                    },
+                    onGoHome = {
+                        navController.navigate(Screen.Home.routes)
+                    }
+                )
+            }
         }
     }
 }
@@ -122,6 +141,15 @@ fun BookshelfBottomAppBar(
             onClick = {
                 navController.navigate(Screen.BooksCategories.routes) {
                     popUpTo(Screen.BooksCategories.routes) { inclusive = true}
+                }
+            }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(R.drawable.ic_favorite_24dp), contentDescription = stringResource(R.string.favorites)) },
+            selected = false,
+            onClick = {
+                navController.navigate(Screen.Favorites.routes) {
+                    popUpTo(Screen.Favorites.routes) { inclusive = true }
                 }
             }
         )

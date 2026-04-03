@@ -8,6 +8,7 @@
 
     <string name="home">Home</string>
     <string name="flight">Flight</string>
+    <string name="favorites">Favorites</string>
 
 
     <string name="hello_name">Hello, Gaëlle</string>
@@ -22,6 +23,11 @@
 
     <string name="add_favorite_button_text">Add to favorites</string>
     <string name="delete_favorite_button_text">Delete to favorites</string>
+
+    <string name="favorite_title">My favorite books</string>
+    <string name="empty_favorite_message">Your bookshelf is empty</string>
+    <string name="add_favorite_message">Add books to your favorites so you can find them more easily here.</string>
+    <string name="explore_books_button">Explore books</string>
 
     <string name="book_details_title">Title of the book</string>
     <string name="book_details_unknown_author">Author unknown</string>

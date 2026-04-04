@@ -137,7 +137,7 @@ fun BookDetailsHeaderImage(
     Box(
         modifier = modifier
             .size(450.dp)
-            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .clip(RoundedCornerShape(24.dp))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)

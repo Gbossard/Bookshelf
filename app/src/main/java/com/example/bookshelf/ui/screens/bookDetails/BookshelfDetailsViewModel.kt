@@ -2,12 +2,7 @@ package com.example.bookshelf.ui.screens.bookDetails
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bookshelf.BookshelfApplication
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -80,16 +75,6 @@ class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfReposi
     fun toggleFavorite(book: BookEntity) {
         viewModelScope.launch {
             bookshelfRepository.toggleFavorite(book)
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as BookshelfApplication)
-                val bookshelfRepository = application.container.bookshelfRepository
-                BookshelfDetailsViewModel(bookshelfRepository = bookshelfRepository)
-            }
         }
     }
 }

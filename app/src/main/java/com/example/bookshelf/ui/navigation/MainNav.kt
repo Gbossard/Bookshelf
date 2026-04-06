@@ -25,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookshelf.R
+import com.example.bookshelf.ui.AppViewModelProvider
 import com.example.bookshelf.ui.screens.HomeScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookDetailsScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookshelfDetailsViewModel
@@ -62,7 +63,7 @@ fun MainNav() {
                 HomeScreen()
             }
             composable(Screen.BooksCategories.routes) {
-                val bookshelfViewModel: BookshelfViewModel = viewModel(factory = BookshelfViewModel.Factory)
+                val bookshelfViewModel: BookshelfViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 val bookshelfUiState by bookshelfViewModel.uiState.collectAsStateWithLifecycle()
 
                 BookListScreen(
@@ -84,7 +85,7 @@ fun MainNav() {
             ) { backStackEntry ->
                 val selectedBookId = backStackEntry.arguments?.getString("selectedBookId") ?: ""
 
-                val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = BookshelfDetailsViewModel.Factory)
+                val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 val bookshelfDetailsUiState by bookshelfDetailsViewModel.uiState.collectAsStateWithLifecycle()
 
                 BookDetailsScreen(
@@ -105,7 +106,7 @@ fun MainNav() {
                 )
             }
             composable(Screen.Favorites.routes) {
-                val favoriteViewModel: FavoriteViewModel = viewModel(factory = FavoriteViewModel.Factory)
+                val favoriteViewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 val favoriteUiState by favoriteViewModel.uiState.collectAsStateWithLifecycle()
 
                 FavoriteScreen(

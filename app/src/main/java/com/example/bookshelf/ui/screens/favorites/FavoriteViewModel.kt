@@ -2,12 +2,7 @@ package com.example.bookshelf.ui.screens.favorites
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bookshelf.BookshelfApplication
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,16 +39,6 @@ class FavoriteViewModel(private val bookshelfRepository: BookshelfRepository) : 
     fun toggleFavorite(book: BookEntity) {
         viewModelScope.launch {
             bookshelfRepository.toggleFavorite(book)
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as BookshelfApplication)
-                val bookshelfRepository = application.container.bookshelfRepository
-                FavoriteViewModel(bookshelfRepository = bookshelfRepository)
-            }
         }
     }
 }

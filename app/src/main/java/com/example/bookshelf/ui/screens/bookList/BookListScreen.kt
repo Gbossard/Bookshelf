@@ -1,9 +1,11 @@
 package com.example.bookshelf.ui.screens.bookList
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.ui.composable.BooksGrid
 import com.example.bookshelf.ui.composable.ErrorScreen
@@ -30,7 +32,8 @@ fun BookListScreen(
                 books = bookshelfUiState.books,
                 modifier = modifier,
                 onGoDetails = onGoDetails,
-                onClickFavorite = onClickFavorite
+                onClickFavorite = onClickFavorite,
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )
         is BookshelfUiState.Error -> ErrorScreen(loadBooks, modifier = modifier.fillMaxSize())
     }

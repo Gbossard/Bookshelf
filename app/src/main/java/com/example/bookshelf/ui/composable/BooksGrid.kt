@@ -5,9 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -36,18 +36,18 @@ import com.example.bookshelf.data.local.model.BookEntity
 @Composable
 fun BooksGrid(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     books: List<BookEntity>,
     onGoDetails: (BookEntity) -> Unit,
     onClickFavorite: (BookEntity) -> Unit,
     content: @Composable () -> Unit = {},
 ) {
     LazyVerticalStaggeredGrid(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier.fillMaxSize(),
         columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp,
+        contentPadding = contentPadding
     ) {
         item(span = StaggeredGridItemSpan.FullLine) {
             content()
@@ -71,13 +71,12 @@ fun BookItem(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.clickable { onGoDetails(book) }
+        modifier = modifier.clip(RoundedCornerShape(24.dp)).clickable { onGoDetails(book) }
     ) {
         val thumbnail = book.thumbnail
         if (thumbnail == null) {
             Image(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(24.dp))
                     .background(MaterialTheme.colorScheme.secondary),
                 painter = painterResource(R.drawable.book),
                 contentScale = ContentScale.Crop,
@@ -101,8 +100,8 @@ fun BookItem(
                 contentDescription = stringResource(R.string.book_image),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onGoDetails(book) }
                     .clip(RoundedCornerShape(24.dp))
+                    .clickable { onGoDetails(book) }
             )
         }
 

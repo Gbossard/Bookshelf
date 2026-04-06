@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +39,14 @@ fun LoadingScreen(
     isList: Boolean = true,
 ) {
     if (isList) {
-        LoadingGridList(modifier = modifier)
+        LoadingGridList(
+            modifier = modifier,
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp
+            )
+        )
     } else {
         LoadingDetailsItem(modifier = modifier)
     }
@@ -46,15 +54,16 @@ fun LoadingScreen(
 
 @Composable
 fun LoadingGridList(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyVerticalStaggeredGrid(
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp,
+        contentPadding = contentPadding
     ) {
         items(10) {
             Box(
@@ -73,34 +82,62 @@ fun LoadingDetailsItem(
 ) {
     Column(modifier = modifier) {
         Box(
-            modifier = Modifier.fillMaxWidth().size(450.dp).clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)).shimmerEffect()
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(450.dp)
+                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                .shimmerEffect()
         )
         Spacer(Modifier.height(16.dp))
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
             Spacer(Modifier.height(12.dp))
             Box(
-                modifier = Modifier.fillMaxWidth(0.4f).height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
             Spacer(Modifier.height(32.dp))
             Box(
-                modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
             Spacer(Modifier.height(16.dp))
             Box(
-                modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
             Spacer(Modifier.height(16.dp))
             Box(
-                modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
             Spacer(Modifier.height(16.dp))
             Box(
-                modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(16.dp)).shimmerEffect()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .shimmerEffect()
             )
         }
     }

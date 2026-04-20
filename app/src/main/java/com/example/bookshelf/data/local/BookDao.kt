@@ -12,21 +12,30 @@ interface BookDao {
     @Query("SELECT * FROM book_table ORDER BY searchOrder ASC")
     fun getAllBooks(): Flow<List<BookEntity>>
 
-    @Query("SELECT * FROM book_table WHERE id = :id")
-    suspend fun getBookById(id: String): BookEntity?
+
+    @Query("SELECT * FROM book_table WHERE isSearchResult = 1 ORDER BY searchOrder ASC")
+    fun getSearchResults(): Flow<List<BookEntity>>
+
 
     @Query("SELECT * FROM book_table WHERE id = :id")
+    suspend fun getBookById(id: String): BookEntity?
+    @Query("SELECT * FROM book_table WHERE id = :id")
     fun getBookByIdFlow(id: String): Flow<BookEntity?>
+
 
     @Query("SELECT * FROM book_table WHERE isFavorite = 1")
     fun getAllFavorites(): Flow<List<BookEntity>>
 
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertBook(book: BookEntity)
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertBooks(books: List<BookEntity>)
 
-    @Query("DELETE FROM book_table WHERE isFavorite = 0")
-    suspend fun clearCache()
+
+    @Query("UPDATE book_table SET isSearchResult = 0")
+    suspend fun clearSearchFlags()
+
+    @Query("DELETE FROM book_table WHERE isSearchResult = 0 AND isFavorite = 0")
+    suspend fun clearUnusedBooks()
 }

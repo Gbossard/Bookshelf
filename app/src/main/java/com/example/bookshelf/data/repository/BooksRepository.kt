@@ -11,12 +11,19 @@ private const val TAG = "DefaultBookRepository"
 interface BookshelfRepository {
     fun getAllBooks(): Flow<List<BookEntity>>
     suspend fun refreshBooks(query: String)
+
+    fun getSearchResults(): Flow<List<BookEntity>>
+    suspend fun searchBooks(query: String)
+
     fun getBookByIdFlow(id: String): Flow<BookEntity?>
     suspend fun getBookById(id: String): BookEntity?
+
     fun getAllFavorites(): Flow<List<BookEntity>>
     suspend fun toggleFavorite(book: BookEntity)
+
     suspend fun updateBookCache(book: BookEntity)
-    suspend fun clearCache()
+    suspend fun clearSearchFlags()
+    suspend fun clearUnusedBooks()
 }
 
 class DefaultBooksRepository(
@@ -25,6 +32,36 @@ class DefaultBooksRepository(
 ): BookshelfRepository {
     override fun getAllBooks(): Flow<List<BookEntity>> = bookDao.getAllBooks()
     override fun getAllFavorites(): Flow<List<BookEntity>> = bookDao.getAllFavorites()
+
+    override suspend fun searchBooks(query: String) {
+        try {
+            val response = bookshelfApiService.getBooks(query)
+
+            if (response.isSuccessful) {
+                val items = response.body()?.items ?: emptyList()
+
+                bookDao.clearSearchFlags()
+
+                val entities = items.mapIndexed { index, networkBook ->
+                    val existingBook = bookDao.getBookById(networkBook.id)
+                    networkBook.toEntity(
+                        isFavorite = existingBook?.isFavorite ?: false,
+                        searchOrder = index,
+                        isSearchResult = true
+                    )
+                }
+
+                bookDao.upsertBooks(entities)
+                bookDao.clearUnusedBooks()
+            }
+
+        } catch (error: Exception) {
+            Log.e(TAG, "Error searchBooks: ", error)
+        }
+    }
+
+    override fun getSearchResults(): Flow<List<BookEntity>> = bookDao.getSearchResults()
+
 
     override suspend fun refreshBooks(query: String) {
         try {
@@ -37,11 +74,12 @@ class DefaultBooksRepository(
                     val existingBook = bookDao.getBookById(networkBook.id)
                     networkBook.toEntity(
                         isFavorite = existingBook?.isFavorite ?: false,
-                        searchOrder = index
+                        searchOrder = index,
+                        isSearchResult = true
                     )
                 }
-                bookDao.clearCache()
                 bookDao.upsertBooks(entities)
+                bookDao.clearUnusedBooks()
             }
         } catch (error: Exception) {
             Log.e(TAG, "Error refreshBooks", error)
@@ -80,5 +118,7 @@ class DefaultBooksRepository(
         bookDao.upsertBook(updatedBook)
     }
     override suspend fun updateBookCache(book: BookEntity) = bookDao.upsertBook(book)
-    override suspend fun clearCache() = bookDao.clearCache()
+
+    override suspend fun clearSearchFlags() = bookDao.clearSearchFlags()
+    override suspend fun clearUnusedBooks() = bookDao.clearUnusedBooks()
 }

@@ -142,7 +142,7 @@ fun BookDetailsHeaderImage(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUri)
-                .crossfade(false)
+                .crossfade(true)
                 .fallback(R.drawable.book)
                 .build(),
             contentScale = ContentScale.Crop,

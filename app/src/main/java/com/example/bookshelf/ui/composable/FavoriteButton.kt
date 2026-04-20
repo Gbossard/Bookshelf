@@ -21,8 +21,8 @@ fun FavoriteButton(
 ) {
     FilledIconButton (
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         shape = RoundedCornerShape(16.dp),
         modifier = modifier

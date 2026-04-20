@@ -8,6 +8,7 @@ import com.example.bookshelf.BookshelfApplication
 import com.example.bookshelf.ui.screens.bookDetails.BookshelfDetailsViewModel
 import com.example.bookshelf.ui.screens.bookList.BookshelfViewModel
 import com.example.bookshelf.ui.screens.favorites.FavoriteViewModel
+import com.example.bookshelf.ui.screens.search.SearchViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -19,6 +20,9 @@ object AppViewModelProvider {
         }
         initializer {
             FavoriteViewModel(bookshelfApplication().container.bookshelfRepository)
+        }
+        initializer {
+            SearchViewModel(bookshelfApplication().container.bookshelfRepository)
         }
     }
 }

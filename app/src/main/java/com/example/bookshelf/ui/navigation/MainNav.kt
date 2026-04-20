@@ -171,15 +171,15 @@ fun BookshelfBottomAppBar(
                 }
             }
         )
-        NavigationBarItem(
-            icon = { Icon(painter = painterResource(R.drawable.ic_flight), contentDescription = stringResource(R.string.flight)) },
-            selected = false,
-            onClick = {
-                navController.navigate(Screen.BooksCategories.routes) {
-                    popUpTo(Screen.BooksCategories.routes) { inclusive = true}
-                }
-            }
-        )
+//        NavigationBarItem(
+//            icon = { Icon(painter = painterResource(R.drawable.ic_flight), contentDescription = stringResource(R.string.flight)) },
+//            selected = false,
+//            onClick = {
+//                navController.navigate(Screen.BooksCategories.routes) {
+//                    popUpTo(Screen.BooksCategories.routes) { inclusive = true}
+//                }
+//            }
+//        )
         NavigationBarItem(
             icon = { Icon(painterResource(R.drawable.ic_favorite_24dp), contentDescription = stringResource(R.string.favorites)) },
             selected = false,

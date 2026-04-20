@@ -41,11 +41,7 @@ fun LoadingScreen(
     if (isList) {
         LoadingGridList(
             modifier = modifier,
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            )
+            contentPadding = PaddingValues(16.dp)
         )
     } else {
         LoadingDetailsItem(modifier = modifier)
@@ -58,8 +54,7 @@ fun LoadingGridList(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyVerticalStaggeredGrid(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp,

@@ -33,6 +33,8 @@ import com.example.bookshelf.ui.screens.bookList.BookListScreen
 import com.example.bookshelf.ui.screens.bookList.BookshelfViewModel
 import com.example.bookshelf.ui.screens.favorites.FavoriteScreen
 import com.example.bookshelf.ui.screens.favorites.FavoriteViewModel
+import com.example.bookshelf.ui.screens.search.SearchScreen
+import com.example.bookshelf.ui.screens.search.SearchViewModel
 
 @Composable
 fun MainNav() {
@@ -60,7 +62,36 @@ fun MainNav() {
             modifier = Modifier.padding(contentPadding)
         ) {
             composable(Screen.Home.routes) {
-                HomeScreen()
+                HomeScreen(
+                    onSearchClick = {
+                        navController.navigate(Screen.Search.routes)
+                    }
+                )
+            }
+            composable(Screen.Search.routes) {
+                val searchViewModel: SearchViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val searchUiState by searchViewModel.uiState.collectAsStateWithLifecycle()
+                val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+
+                SearchScreen(
+                    query = searchQuery,
+                    onQueryChange = { newQuery ->
+                        searchViewModel.onQueryChange(newQuery)
+                    },
+                    searchUiState = searchUiState,
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onGoDetails = { book ->
+                        navController.navigate(Screen.Details.createRoute(book.id))
+                    },
+                    onClearQuery = {
+                        searchViewModel.onClearQuery()
+                    },
+                    onClickFavorite = {
+                        searchViewModel.toggleFavorite(it)
+                    }
+                )
             }
             composable(Screen.BooksCategories.routes) {
                 val bookshelfViewModel: BookshelfViewModel = viewModel(factory = AppViewModelProvider.Factory)

@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import com.example.bookshelf.ui.composable.EmptySearch
 import com.example.bookshelf.ui.composable.ErrorScreen
 import com.example.bookshelf.ui.composable.LoadingScreen
 import com.example.bookshelf.ui.composable.NoResults
+import kotlinx.coroutines.flow.SharedFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +51,19 @@ fun SearchScreen(
     onBack: () -> Unit,
     onClearQuery: () -> Unit,
     onGoDetails: (BookEntity) -> Unit,
-    onClickFavorite: (BookEntity) -> Unit
+    onClickFavorite: (BookEntity) -> Unit,
+    events: SharedFlow<SearchUiEvent>,
+    snackbarHostState: SnackbarHostState
 ) {
+    LaunchedEffect(Unit) {
+        events.collect { event ->
+            when (event) {
+                is SearchUiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
     Column(
         modifier = modifier.fillMaxSize()
     ) {

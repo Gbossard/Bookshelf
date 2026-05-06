@@ -6,6 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,6 +45,8 @@ fun MainNav() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(navBackStackEntry) {
         bottomBarState.value = navBackStackEntry?.destination?.route != Screen.Details.routes
     }
@@ -50,6 +54,7 @@ fun MainNav() {
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         containerColor = Color.Transparent,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (bottomBarState.value) {
                 BookshelfBottomAppBar(navController)
@@ -90,7 +95,9 @@ fun MainNav() {
                     },
                     onClickFavorite = {
                         searchViewModel.toggleFavorite(it)
-                    }
+                    },
+                    events = searchViewModel.events,
+                    snackbarHostState = snackbarHostState
                 )
             }
             composable(Screen.BooksCategories.routes) {

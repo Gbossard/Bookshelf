@@ -6,7 +6,7 @@ import com.example.bookshelf.data.network.model.Book
 fun Book.toEntity(
     isFavorite: Boolean = false,
     searchOrder: Int = 0,
-    isSearchResult: Boolean = false
+    searchQuery: String? = null
 ): BookEntity {
     val isbn10 = this.volumeInfo.industryIdentifiers?.find { it.type == "ISBN_10" }?.identifier
     val isbn13 = this.volumeInfo.industryIdentifiers?.find { it.type == "ISBN_13" }?.identifier
@@ -25,6 +25,6 @@ fun Book.toEntity(
         buyLink = this.saleInfo?.buyLink,
         isFavorite = isFavorite,
         searchOrder = searchOrder,
-        isSearchResult = isSearchResult
+        searchQuery = searchQuery,
     )
 }

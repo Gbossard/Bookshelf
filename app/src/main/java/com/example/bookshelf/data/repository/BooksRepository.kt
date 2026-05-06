@@ -9,59 +9,29 @@ import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "DefaultBookRepository"
 interface BookshelfRepository {
+    // Category
     fun getAllBooks(): Flow<List<BookEntity>>
     suspend fun refreshBooks(query: String)
 
-    fun getSearchResults(): Flow<List<BookEntity>>
-    suspend fun searchBooks(query: String)
+    // Search
+    fun observeSearchResults(query: String): Flow<List<BookEntity>>
+    suspend fun refreshSearch(query: String)
 
+    // Book Details
     fun getBookByIdFlow(id: String): Flow<BookEntity?>
     suspend fun getBookById(id: String): BookEntity?
 
+    // Favorite
     fun getAllFavorites(): Flow<List<BookEntity>>
     suspend fun toggleFavorite(book: BookEntity)
-
-    suspend fun updateBookCache(book: BookEntity)
-    suspend fun clearSearchFlags()
-    suspend fun clearUnusedBooks()
 }
 
 class DefaultBooksRepository(
     private val bookshelfApiService: BookshelfApiService,
     private val bookDao: BookDao
 ): BookshelfRepository {
+    // Category
     override fun getAllBooks(): Flow<List<BookEntity>> = bookDao.getAllBooks()
-    override fun getAllFavorites(): Flow<List<BookEntity>> = bookDao.getAllFavorites()
-
-    override suspend fun searchBooks(query: String) {
-        try {
-            val response = bookshelfApiService.getBooks(query)
-
-            if (response.isSuccessful) {
-                val items = response.body()?.items ?: emptyList()
-
-                bookDao.clearSearchFlags()
-
-                val entities = items.mapIndexed { index, networkBook ->
-                    val existingBook = bookDao.getBookById(networkBook.id)
-                    networkBook.toEntity(
-                        isFavorite = existingBook?.isFavorite ?: false,
-                        searchOrder = index,
-                        isSearchResult = true
-                    )
-                }
-
-                bookDao.upsertBooks(entities)
-                bookDao.clearUnusedBooks()
-            }
-
-        } catch (error: Exception) {
-            Log.e(TAG, "Error searchBooks: ", error)
-        }
-    }
-
-    override fun getSearchResults(): Flow<List<BookEntity>> = bookDao.getSearchResults()
-
 
     override suspend fun refreshBooks(query: String) {
         try {
@@ -75,17 +45,48 @@ class DefaultBooksRepository(
                     networkBook.toEntity(
                         isFavorite = existingBook?.isFavorite ?: false,
                         searchOrder = index,
-                        isSearchResult = true
+                        searchQuery = query
                     )
                 }
                 bookDao.upsertBooks(entities)
-                bookDao.clearUnusedBooks()
             }
         } catch (error: Exception) {
             Log.e(TAG, "Error refreshBooks", error)
         }
     }
 
+
+    // Search
+    override suspend fun refreshSearch(query: String) {
+        try {
+            val response = bookshelfApiService.getBooks(query)
+
+            if (response.isSuccessful) {
+                val items = response.body()?.items ?: emptyList()
+
+                val entities = items.mapIndexed { index, networkBook ->
+                    val existingBook = bookDao.getBookById(networkBook.id)
+                    networkBook.toEntity(
+                        isFavorite = existingBook?.isFavorite ?: false,
+                        searchOrder = index,
+                        searchQuery = query,
+                    )
+                }
+                bookDao.updateSearchResults(query, entities)
+            } else {
+                Log.e(TAG, "Error response searchBooks: ${response.code()} ${response.message()}")
+                throw Exception("HTTP ${response.code()}")
+            }
+        } catch (error: Exception) {
+            Log.e(TAG, "Error searchBooks: ", error)
+            throw error
+        }
+    }
+
+    override fun observeSearchResults(query: String): Flow<List<BookEntity>> = bookDao.observeSearchResults(query)
+
+
+    // Book Details
     override suspend fun getBookById(id: String): BookEntity? {
         val localBook = bookDao.getBookById(id)
         if (localBook != null) return localBook
@@ -113,12 +114,12 @@ class DefaultBooksRepository(
         return bookDao.getBookByIdFlow(id)
     }
 
+
+    // Favorite
+    override fun getAllFavorites(): Flow<List<BookEntity>> = bookDao.getAllFavorites()
+
     override suspend fun toggleFavorite(book: BookEntity) {
         val updatedBook = book.copy(isFavorite = !book.isFavorite)
         bookDao.upsertBook(updatedBook)
     }
-    override suspend fun updateBookCache(book: BookEntity) = bookDao.upsertBook(book)
-
-    override suspend fun clearSearchFlags() = bookDao.clearSearchFlags()
-    override suspend fun clearUnusedBooks() = bookDao.clearUnusedBooks()
 }

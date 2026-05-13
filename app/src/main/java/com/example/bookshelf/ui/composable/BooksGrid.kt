@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import coil3.request.error
 import coil3.request.fallback
 import com.example.bookshelf.R
 import com.example.bookshelf.data.local.model.BookEntity
@@ -95,6 +96,7 @@ fun BookItem(
                     .data(thumbnail)
                     .crossfade(true)
                     .fallback(R.drawable.book)
+                    .error(R.drawable.book)
                     .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = stringResource(R.string.book_image),

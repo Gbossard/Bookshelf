@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,54 +78,54 @@ fun LoadingDetailsItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 16.dp)
                 .size(450.dp)
                 .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                 .shimmerEffect()
         )
-        Spacer(Modifier.height(16.dp))
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 12.dp)
                     .height(20.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
-            Spacer(Modifier.height(12.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.4f)
+                    .padding(bottom = 32.dp)
                     .height(20.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
-            Spacer(Modifier.height(32.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .height(20.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
-            Spacer(Modifier.height(16.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .height(20.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
-            Spacer(Modifier.height(16.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 16.dp)
                     .height(20.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
-            Spacer(Modifier.height(16.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

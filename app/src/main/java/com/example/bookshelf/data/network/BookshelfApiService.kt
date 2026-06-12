@@ -6,12 +6,19 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import com.example.bookshelf.BuildConfig
 
 interface BookshelfApiService {
 
     @GET("volumes")
-    suspend fun getBooks(@Query("q") query: String): Response<ResponseData>
+    suspend fun getBooks(
+        @Query("q") query: String,
+        @Query("key") apiKey: String = BuildConfig.BOOKS_API_KEY
+    ): Response<ResponseData>
 
     @GET("volumes/{id}")
-    suspend fun getBook(@Path("id") id: String): Response<Book>
+    suspend fun getBook(
+        @Path("id") id: String,
+        @Query("key") apiKey: String = BuildConfig.BOOKS_API_KEY
+    ): Response<Book>
 }

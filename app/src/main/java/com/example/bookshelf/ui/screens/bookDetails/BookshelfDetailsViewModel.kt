@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 private const val TAG = "BookshelfDetailsViewModel"
 
@@ -28,7 +30,10 @@ sealed interface BookshelfDetailsUiState {
     object Loading: BookshelfDetailsUiState
 }
 
-class BookshelfDetailsViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
+@HiltViewModel
+class BookshelfDetailsViewModel @Inject constructor(
+    private val bookshelfRepository: BookshelfRepository
+) : ViewModel() {
     private val _selectedBookId = MutableStateFlow<String?>(null)
 
     @OptIn( ExperimentalCoroutinesApi::class)

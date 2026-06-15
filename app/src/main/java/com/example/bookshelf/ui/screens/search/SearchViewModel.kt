@@ -4,7 +4,8 @@ package com.example.bookshelf.ui.screens.search
 import androidx.lifecycle.viewModelScope
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+    import dagger.hilt.android.lifecycle.HiltViewModel
+    import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +22,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
+    import javax.inject.Inject
+    import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "SearchViewModel"
 
@@ -41,7 +43,10 @@ sealed interface SearchUiEvent {
     data class ShowSnackbar(val message: String): SearchUiEvent
 }
 
-class SearchViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val bookshelfRepository: BookshelfRepository
+) : ViewModel() {
     private val _searchRawUiState = MutableStateFlow(SearchRawUiState())
     private val networkError = MutableStateFlow<String?>(null)
     private val isRequestFinished = MutableStateFlow(false)

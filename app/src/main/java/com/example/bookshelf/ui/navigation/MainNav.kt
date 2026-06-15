@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,7 +27,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.bookshelf.R
-import com.example.bookshelf.ui.AppViewModelProvider
 import com.example.bookshelf.ui.screens.HomeScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookDetailsScreen
 import com.example.bookshelf.ui.screens.bookDetails.BookshelfDetailsViewModel
@@ -74,7 +73,7 @@ fun MainNav() {
                 )
             }
             composable(Screen.Search.routes) {
-                val searchViewModel: SearchViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val searchViewModel: SearchViewModel = hiltViewModel()
                 val searchUiState by searchViewModel.uiState.collectAsStateWithLifecycle()
                 val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
 
@@ -101,7 +100,7 @@ fun MainNav() {
                 )
             }
             composable(Screen.BooksCategories.routes) {
-                val bookshelfViewModel: BookshelfViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val bookshelfViewModel: BookshelfViewModel = hiltViewModel()
                 val bookshelfUiState by bookshelfViewModel.uiState.collectAsStateWithLifecycle()
 
                 BookListScreen(
@@ -123,7 +122,7 @@ fun MainNav() {
             ) { backStackEntry ->
                 val selectedBookId = backStackEntry.arguments?.getString("selectedBookId") ?: ""
 
-                val bookshelfDetailsViewModel: BookshelfDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val bookshelfDetailsViewModel: BookshelfDetailsViewModel = hiltViewModel()
                 val bookshelfDetailsUiState by bookshelfDetailsViewModel.uiState.collectAsStateWithLifecycle()
 
                 BookDetailsScreen(
@@ -144,7 +143,7 @@ fun MainNav() {
                 )
             }
             composable(Screen.Favorites.routes) {
-                val favoriteViewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val favoriteViewModel: FavoriteViewModel = hiltViewModel()
                 val favoriteUiState by favoriteViewModel.uiState.collectAsStateWithLifecycle()
 
                 FavoriteScreen(

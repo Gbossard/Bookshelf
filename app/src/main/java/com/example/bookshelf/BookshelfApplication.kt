@@ -1,13 +1,7 @@
 package com.example.bookshelf
 
 import android.app.Application
-import com.example.bookshelf.data.AppContainer
-import com.example.bookshelf.data.DefaultAppContainer
+import dagger.hilt.android.HiltAndroidApp
 
-class BookshelfApplication : Application() {
-    lateinit var container: AppContainer
-    override fun onCreate() {
-        super.onCreate()
-        container = DefaultAppContainer(this)
-    }
-}
+@HiltAndroidApp
+class BookshelfApplication : Application()

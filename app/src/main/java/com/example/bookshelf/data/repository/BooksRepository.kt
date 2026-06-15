@@ -6,6 +6,8 @@ import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.mapper.toEntity
 import com.example.bookshelf.data.network.BookshelfApiService
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "DefaultBookRepository"
 interface BookshelfRepository {
@@ -26,7 +28,8 @@ interface BookshelfRepository {
     suspend fun toggleFavorite(book: BookEntity)
 }
 
-class DefaultBooksRepository(
+@Singleton
+class DefaultBooksRepository @Inject constructor(
     private val bookshelfApiService: BookshelfApiService,
     private val bookDao: BookDao
 ): BookshelfRepository {

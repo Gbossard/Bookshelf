@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 private const val TAG = "BookshelfViewModel"
 sealed interface BookshelfUiState {
@@ -29,7 +31,10 @@ sealed interface BookshelfUiState {
     object Loading: BookshelfUiState
 }
 
-class BookshelfViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
+@HiltViewModel
+class BookshelfViewModel @Inject constructor(
+    private val bookshelfRepository: BookshelfRepository
+) : ViewModel() {
 
     private val _searchRawUiState = MutableStateFlow("travel+newZealand")
 

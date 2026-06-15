@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bookshelf.data.local.model.BookEntity
 import com.example.bookshelf.data.repository.BookshelfRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val TAG = "FavoriteViewModel"
 sealed interface FavoriteUiState {
@@ -20,7 +22,10 @@ sealed interface FavoriteUiState {
     object Loading: FavoriteUiState
 }
 
-class FavoriteViewModel(private val bookshelfRepository: BookshelfRepository) : ViewModel() {
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
+    private val bookshelfRepository: BookshelfRepository
+) : ViewModel() {
     val uiState: StateFlow<FavoriteUiState> = bookshelfRepository.getAllFavorites()
         .map<List<BookEntity>, FavoriteUiState> { favorites ->
             FavoriteUiState.Success(favorites)

@@ -19,7 +19,7 @@ fun Book.toEntity(
         publishedDate = this.volumeInfo.publishedDate,
         description = this.volumeInfo.description,
         pageCount = this.volumeInfo.pageCount,
-        thumbnail = this.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://"),
+        thumbnail = this.volumeInfo.imageLinks?.thumbnail?.toHighQuality(),
         isbn10 = isbn10,
         isbn13 = isbn13,
         buyLink = this.saleInfo?.buyLink,
@@ -27,4 +27,11 @@ fun Book.toEntity(
         searchOrder = searchOrder,
         searchQuery = searchQuery,
     )
+}
+
+fun String.toHighQuality(): String {
+    return this
+        .replace("http://", "https://")
+        .replace("&zoom=5", "&zoom=3")
+        .replace("&zoom=1", "&zoom=3")
 }

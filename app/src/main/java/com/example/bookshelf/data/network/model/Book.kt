@@ -30,15 +30,8 @@ data class VolumeInfo(
 
 @Serializable
 data class ImageLinks(
-    val smallThumbnail: String? = "",
     val thumbnail: String? = ""
-) {
-    val httpsThumbnail: String?
-        get() = thumbnail?.replace("http", "https")
-    val httpsSmallThumbnail: String?
-        get() = smallThumbnail?.replace("http", "https")
-
-}
+)
 
 @Serializable
 data class IndustryIdentifiers(
